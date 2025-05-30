@@ -5,6 +5,7 @@ import lombok.Getter;
 
 @Getter
 public class BusinessException extends RuntimeException {
+
     private final ReturnCode errorCode;
 
     public BusinessException(ReturnCode errorCode) {
@@ -12,4 +13,8 @@ public class BusinessException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
+    public BusinessException(ReturnCode errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
 }

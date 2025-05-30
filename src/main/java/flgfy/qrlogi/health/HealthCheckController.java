@@ -10,4 +10,10 @@ public class HealthCheckController {
     public String healthCheck() {
         return "정상 동작합니다.";
     }
+
+    @GetMapping("/")
+    public String home() {
+        return "QRLogi!";
+    }
+
 }

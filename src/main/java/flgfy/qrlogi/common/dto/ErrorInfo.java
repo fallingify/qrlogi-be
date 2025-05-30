@@ -6,16 +6,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class ErrorInfo {
+    private String exception;
+    private String errorMessage;
+    private int status;
+    private String traceId;
 
-    @Builder.Default
-    private String exception = "알 수 없는 에러";
-
-    @Builder.Default
-    private String errorMessage = "에러 메시지 없음";
-
-    @Builder.Default
-    private int status = 500;
-
-    @Builder.Default
-    private String traceId = "unknown-trace-id";
 }
