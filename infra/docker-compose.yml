@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  qr-db-master: # MASTER
+    image: bitnami/mysql:8.0
+    container_name: qr-db-master
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_REPLICATION_MODE=master
+      - MYSQL_REPLICATION_USER=repl
+      - MYSQL_REPLICATION_PASSWORD=replpass
+      - MYSQL_ROOT_PASSWORD=rootpass
+      - MYSQL_DATABASE=qrlogidb
+    volumes:
+      - mysql_master_data:/bitnami/mysql
+
+  qr-db-slave: # SLAVE
+    image: bitnami/mysql:8.0
+    container_name: qr-db-slave
+    ports:
+      - "3308:3306"
+    depends_on:
+      - qr-db-master
+    environment:
+      - MYSQL_REPLICATION_MODE=slave
+      - MYSQL_REPLICATION_USER=repl
+      - MYSQL_REPLICATION_PASSWORD=replpass
+      - MYSQL_MASTER_HOST=qr-db-master
+      - MYSQL_MASTER_ROOT_PASSWORD=rootpass
+    volumes:
+      - mysql_slave_data:/bitnami/mysql
+
+  qr-api: # Spring application
+    build:
+      context: ../api
+      dockerfile: Dockerfile
+    container_name: qr-spring-app
+    depends_on:
+      - qr-db-master
+      - qr-db-slave
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+
+volumes:
+  mysql_master_data: {}
+  mysql_slave_data: {}
