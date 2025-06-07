@@ -23,6 +23,16 @@ springBoot {
 }
 
 dependencies {
+    implementation project(':domain-buyer')
+    implementation project(':domain-order')
+    implementation project(':domain-orderitem')
+    implementation project(':domain-payment')
+    implementation project(':domain-product')
+    implementation project(':domain-qrscanlog')
+    implementation project(':domain-shipment')
+    implementation project(':domain-shipmentitem')
+    implementation project(':domain-user')
+
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
