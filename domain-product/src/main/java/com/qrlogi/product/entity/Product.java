@@ -18,10 +18,10 @@ public class Product {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "model_code", nullable = false, unique = true)
     private String modelCode;
 
-    @Column(nullable = false)
+    @Column(name = "unit_price", nullable = false)
     private Long unitPrice;
 
     @Column(nullable = false)

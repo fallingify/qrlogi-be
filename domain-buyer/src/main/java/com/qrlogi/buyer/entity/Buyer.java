@@ -25,7 +25,7 @@ public class Buyer {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "business_num", nullable = false, unique = true)
     private String businessNumber; //사업자등록번호
 
 
