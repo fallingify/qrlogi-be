@@ -23,7 +23,7 @@ public class User {
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole role; // ADMIN, WORKER
 
     @Column(nullable = false, unique = true)
     private String email;
