@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   qr-db-master: # MASTER
     image: bitnami/mysql:8.0
@@ -14,6 +12,11 @@ services:
       - MYSQL_DATABASE=qrlogidb
     volumes:
       - mysql_master_data:/bitnami/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   qr-db-slave: # SLAVE
     image: bitnami/mysql:8.0
@@ -30,15 +33,22 @@ services:
       - MYSQL_MASTER_ROOT_PASSWORD=rootpass
     volumes:
       - mysql_slave_data:/bitnami/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-prootpass" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   qr-api: # Spring application
     build:
-      context: ../api
+      context:  ../
       dockerfile: Dockerfile
     container_name: qr-spring-app
     depends_on:
-      - qr-db-master
-      - qr-db-slave
+      qr-db-master:
+        condition: service_healthy
+      qr-db-slave:
+        condition: service_healthy
     ports:
       - "8080:8080"
     environment:

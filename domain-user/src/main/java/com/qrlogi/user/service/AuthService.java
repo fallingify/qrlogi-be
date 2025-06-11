@@ -1,11 +1,14 @@
 package com.qrlogi.user.service;
 
+import com.qrlogi.user.dto.DeleteRequest;
 import com.qrlogi.user.dto.SignRequest;
 import com.qrlogi.user.dto.SignResponse;
 import com.qrlogi.user.entity.User;
 import com.qrlogi.user.entity.UserRole;
 import com.qrlogi.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -39,4 +42,23 @@ public class AuthService {
         );
     }
 
+    /*
+    회원탙퇴용도의 getUser()
+     */
+    public String getCurrentUsername() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        return authentication.getName();
+    }
+
+    public void deleteCurrentUser(DeleteRequest request) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        User goneUser = userRepository.findByUsername(username).orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        if(!passwordEncoder.matches(request.getPassword(), goneUser.getPassword())) {
+            throw new IllegalArgumentException("Wrong password");
+        }
+        userRepository.delete(goneUser);
+
+    }
 }
