@@ -35,11 +35,10 @@ public class SecurityConfig{
         http
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/health", "/api/users/signup", "/api/users/login", "/api/users/delete").permitAll()
+                                .requestMatchers("/api/health", "/api/users/signup", "/api/users/login", "/api/users/delete", "/v3/api-docs/**",  "/swagger-ui/**", "/swagger-ui.html").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .httpBasic(Customizer.withDefaults())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .userDetailsService(loginUserDetailService)
                 .addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
