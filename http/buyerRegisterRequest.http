@@ -1,0 +1,14 @@
+### 바이어 등록하기
+POST http://localhost:8080/api/buyers
+Content-Type: application/json
+
+{
+  "name": "tester",
+  "email": "tester",
+  "password": "tester",
+  "phone": "010-1111-1111",
+  "bussinessNumber": "abcd"
+}
+
+### 전체 바이어목록
+GET http://localhost:8080/api/buyers

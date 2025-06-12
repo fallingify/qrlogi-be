@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -35,7 +34,7 @@ public class SecurityConfig{
         http
                 .authorizeHttpRequests(
                         request -> request
-                                .requestMatchers("/api/health", "/api/users/signup", "/api/users/login", "/api/users/delete", "/v3/api-docs/**",  "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                                .requestMatchers("/api/health", "/api/users/signup", "/api/users/login", "/api/users/delete", "/v3/api-docs/**",  "/swagger-ui/**", "/swagger-ui.html", "/api/buyers/**").permitAll()
                                 .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
