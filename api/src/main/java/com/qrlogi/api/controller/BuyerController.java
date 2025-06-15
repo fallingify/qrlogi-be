@@ -1,8 +1,9 @@
 package com.qrlogi.api.controller;
 
-import com.qrlogi.buyer.dto.BuyerRequest;
-import com.qrlogi.buyer.dto.BuyerResponse;
-import com.qrlogi.buyer.service.BuyerService;
+
+import com.qrlogi.domain.buyer.dto.BuyerRequest;
+import com.qrlogi.domain.buyer.dto.BuyerResponse;
+import com.qrlogi.domain.buyer.service.BuyerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

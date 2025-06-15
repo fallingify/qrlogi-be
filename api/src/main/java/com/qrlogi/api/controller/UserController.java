@@ -2,17 +2,15 @@ package com.qrlogi.api.controller;
 
 
 import com.qrlogi.api.config.JwtTokenProvider;
-import com.qrlogi.user.dto.*;
-import com.qrlogi.user.service.AuthService;
+import com.qrlogi.domain.user.dto.*;
+import com.qrlogi.domain.user.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
