@@ -4,8 +4,8 @@
 **서비스플로우** 
 - QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 
-<br><br><br>
-
+<br>
+<br>
 
 **프로젝트 구조**
 - msa적용을 고려한 구조
@@ -13,10 +13,11 @@
 - infra : Docker, DB설정
 - health : 헬스체크용
 - domain : 도메인
-```
-<br>
 
-/
+
+
+```
+.
 ├── Dockerfile
 ├── api
 │   ├── build
@@ -218,7 +219,11 @@
 
 
 ```
-<br><br>
-**Docker 설정**
+<br><br><br>
+**Docker**
 - MySql
 - Master-Slave구조 (springApp, master, slave)
+
+<br><br>
+**Snowflake**
+- orderitem일련번호에 적용
