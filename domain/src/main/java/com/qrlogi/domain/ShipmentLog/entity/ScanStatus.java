@@ -1,4 +1,4 @@
-package com.qrlogi.domain.qrscanlog.entity;
+package com.qrlogi.domain.ShipmentLog.entity;
 
 public enum ScanStatus {
     SUCCESS, DUPLICATE, NOT_REGISTERED, FAILED

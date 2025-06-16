@@ -31,8 +31,29 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @Column(name ="qty", nullable = false)
-    private int qty;
+    @Column(nullable = false)
+    private int orderedQty;
+
+    @Column(nullable = false)
+    private int shippedQty;
+
+    @Enumerated(EnumType.STRING)
+    private ShipmentStatus shipmentStatus;
+
+    public void addShippingQty(int qty) {
+        this.shippedQty += qty;
+        updateShipmentStatus();
+    }
+
+    private void updateShipmentStatus() {
+        if(shippedQty >= orderedQty) this.shipmentStatus = shipmentStatus;
+        else if(shippedQty > 0) this.shipmentStatus = ShipmentStatus.PARTIAL;
+        else this.shipmentStatus = shipmentStatus.PENDING;
+    }
+
+
+
+
 
 
 }

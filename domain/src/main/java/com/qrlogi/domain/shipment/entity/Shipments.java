@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Builder
 @Table(name = "shipments")
-public class Shipment {
+public class Shipments {
 
     @Id
     @Column(length = 36)

@@ -2,8 +2,7 @@ package com.qrlogi.domain.shipmentitem.entity;
 
 
 import com.qrlogi.domain.product.entity.Product;
-import com.qrlogi.domain.shipment.entity.Shipment;
-
+import com.qrlogi.domain.shipment.entity.Shipments;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,7 +23,7 @@ public class ShipmentItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="shipment_id", nullable = false)
-    private Shipment shipment;
+    private Shipments shipment;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="product_id", nullable = false)
