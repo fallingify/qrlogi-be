@@ -6,7 +6,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 
 @Entity
@@ -21,9 +20,8 @@ public class Orders {
     @Column(length = 36)
     private String id; // UUID
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "order_number", nullable = false, unique = true)
-    private Long orderNumber; //내부식별자
+    private Long orderNumber; ///Snowflake적용한 내부 식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
@@ -36,10 +34,6 @@ public class Orders {
     @Column(name = "order_status", nullable = false)
     private OrderStatus orderStatus;
 
-    @PrePersist
-    public void generateId() {
-        if (id == null) id = UUID.randomUUID().toString();
-    }
 
     public void cancel() {
         this.orderStatus = OrderStatus.CANCELLED;

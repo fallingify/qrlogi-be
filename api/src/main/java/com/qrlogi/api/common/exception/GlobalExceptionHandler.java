@@ -51,8 +51,6 @@ public class GlobalExceptionHandler {
     }
 
 
-
-
     private static ErrorInfo getErrorInfo(Exception ex, String errMsg, HttpStatus httpStatus, String traceId) {
         return ErrorInfo.builder()
                 .exception(ex.getClass().getSimpleName())
