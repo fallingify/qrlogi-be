@@ -1,7 +1,7 @@
-package flgfy.qrlogi.common.dto;
+package com.qrlogi.api.common.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import flgfy.qrlogi.common.enums.ReturnCode;
+import com.qrlogi.api.common.enums.ReturnCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

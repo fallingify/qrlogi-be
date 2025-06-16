@@ -1,8 +1,8 @@
-package flgfy.qrlogi.common.exception;
+package com.qrlogi.api.common.exception;
 
-import flgfy.qrlogi.common.dto.CommonResponse;
-import flgfy.qrlogi.common.dto.ErrorInfo;
-import flgfy.qrlogi.common.enums.ReturnCode;
+import com.qrlogi.api.common.dto.CommonResponse;
+import com.qrlogi.api.common.dto.ErrorInfo;
+import com.qrlogi.api.common.enums.ReturnCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,7 +25,7 @@ public class GlobalExceptionHandler {
         String errMsg = (ex.getMessage() != null) ? ex.getMessage() : "예외 메시지 없음";
 
         if (ex instanceof BusinessException be) {
-            returnCode = be.getErrorCode();
+            returnCode =    be.getErrorCode();
             httpStatus = be.getErrorCode().getHttpStatus();
         } else if (ex instanceof org.springframework.web.bind.MethodArgumentNotValidException) {
             returnCode = ReturnCode.VALIDATION_ERROR;
@@ -39,12 +39,7 @@ public class GlobalExceptionHandler {
 
         log.error("[traceId: {}] {}: {}", traceId, ex.getClass().getSimpleName(), errMsg, ex);
 
-        ErrorInfo errorInfo = ErrorInfo.builder()
-                .exception(ex.getClass().getSimpleName())
-                .errorMessage(errMsg)
-                .status(httpStatus.value())
-                .traceId(traceId)
-                .build();
+        ErrorInfo errorInfo = getErrorInfo(ex, errMsg, httpStatus, traceId);
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add("X-Trace-Id", traceId);
@@ -52,7 +47,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(httpStatus)
                 .headers(httpHeaders)
                 .body(CommonResponse.of(returnCode, errorInfo));
-        }
+
+    }
+
+
+
+
+    private static ErrorInfo getErrorInfo(Exception ex, String errMsg, HttpStatus httpStatus, String traceId) {
+        return ErrorInfo.builder()
+                .exception(ex.getClass().getSimpleName())
+                .errorMessage(errMsg)
+                .status(httpStatus.value())
+                .traceId(traceId)
+                .build();
+
+    }
 
 
 }

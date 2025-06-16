@@ -1,20 +1,13 @@
-package flgfy.qrlogi.common.exception;
+package com.qrlogi.api.common.exception;
 
-import flgfy.qrlogi.common.enums.ReturnCode;
+import com.qrlogi.api.common.enums.ReturnCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 
 @Getter
-public class BusinessException extends RuntimeException {
+@RequiredArgsConstructor
+public class BusinessException extends RuntimeException{
 
     private final ReturnCode errorCode;
-
-    public BusinessException(ReturnCode errorCode) {
-        super(errorCode.getText());
-        this.errorCode = errorCode;
-    }
-
-    public BusinessException(ReturnCode errorCode, String message) {
-        super(message);
-        this.errorCode = errorCode;
-    }
-}
+ }

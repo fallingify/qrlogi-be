@@ -1,4 +1,4 @@
-package com.qrlogi.product.entity;
+package com.qrlogi.domain.product.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

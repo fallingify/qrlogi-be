@@ -1,4 +1,4 @@
-package flgfy.qrlogi.common.dto;
+package com.qrlogi.api.common.dto;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.qrlogi.domain.order.dto;
 
-import com.qrlogi.orderitem.orderitem.dto.OrderItemDTO;
+import com.qrlogi.domain.orderitem.orderitem.dto.OrderItemDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

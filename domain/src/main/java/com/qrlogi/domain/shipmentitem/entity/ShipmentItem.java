@@ -1,8 +1,9 @@
 package com.qrlogi.domain.shipmentitem.entity;
 
 
+import com.qrlogi.domain.product.entity.Product;
 import com.qrlogi.domain.shipment.entity.Shipment;
-import com.qrlogi.product.entity.Product;
+
 import jakarta.persistence.*;
 import lombok.*;
 

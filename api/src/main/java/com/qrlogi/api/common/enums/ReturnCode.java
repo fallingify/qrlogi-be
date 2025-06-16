@@ -1,4 +1,4 @@
-package flgfy.qrlogi.common.enums;
+package com.qrlogi.api.common.enums;
 
 import org.springframework.http.HttpStatus;
 

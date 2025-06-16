@@ -2,7 +2,8 @@ package com.qrlogi.domain.orderitem.orderitem.entity;
 
 
 import com.qrlogi.domain.order.entity.Orders;
-import com.qrlogi.product.entity.Product;
+
+import com.qrlogi.domain.product.entity.Product;
 import jakarta.persistence.*;
 import lombok.*;
 import jakarta.persistence.Id;

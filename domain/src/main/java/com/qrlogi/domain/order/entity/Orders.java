@@ -41,4 +41,7 @@ public class Orders {
         if (id == null) id = UUID.randomUUID().toString();
     }
 
+    public void cancel() {
+        this.orderStatus = OrderStatus.CANCELLED;
+    }
 }

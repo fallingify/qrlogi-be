@@ -1,6 +1,7 @@
 package com.qrlogi.api.config;
 
-import com.qrlogi.user.service.LoginUserDetailService;
+
+import com.qrlogi.domain.user.service.LoginUserDetailService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

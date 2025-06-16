@@ -1,10 +1,9 @@
 package com.qrlogi.domain.qrscanlog.entity;
 
-
-import com.qrlogi.user.entity.User;
+import com.qrlogi.domain.shipmentitem.entity.ShipmentItem;
+import com.qrlogi.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
-import com.qrlogi.shipmentitem.entity.ShipmentItem;
 
 import java.time.LocalDateTime;
 

@@ -1,6 +1,6 @@
 package com.qrlogi.domain.payment.entity;
 
-import com.qrlogi.shipment.entity.Shipment;
+import com.qrlogi.domain.shipment.entity.Shipment;
 import jakarta.persistence.*;
 import lombok.*;
 
