@@ -1,24 +1,25 @@
-### 진행 중
-<br><br>
+**진행중**
+<br><br><br>
 
+**서비스플로우** 
 QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
+
+<br><br>
 
 ---
 
 
 **프로젝트 구조**
-
-- 도메인별 멀티모듈
-- api: spring application 실행
+- msa적용을 고려한 구조
+- api: 실행파일
 - infra : Docker, DB설정
-- health : 헬스체크
-- domain - : 도메인별 독립
+- health : 헬스체크용
+- domain : 도메인
 ```
+<br>
 
 /
 ├── Dockerfile
-├── HELP.md
-├── README.md
 ├── api
 │   ├── build
 │   │   ├── classes
@@ -65,32 +66,7 @@ QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 │   │   │               └── qrlogi
 │   │   │                   └── api
 │   │   │                       └── QrLogiApplicationTests.class
-│   │   ├── generated
-│   │   │   └── sources
-│   │   │       ├── annotationProcessor
-│   │   │       │   └── java
-│   │   │       │       ├── main
-│   │   │       │       └── test
-│   │   │       └── headers
-│   │   │           └── java
-│   │   │               ├── main
-│   │   │               └── test
 │   │   ├── libs
-│   │   │   └── api-0.0.1-SNAPSHOT.jar
-│   │   ├── reports
-│   │   │   └── tests
-│   │   │       └── test
-│   │   │           ├── classes
-│   │   │           │   └── com.qrlogi.api.QrLogiApplicationTests.html
-│   │   │           ├── css
-│   │   │           │   ├── base-style.css
-│   │   │           │   └── style.css
-│   │   │           ├── index.html
-│   │   │           ├── js
-│   │   │           │   └── report.js
-│   │   │           └── packages
-│   │   │               └── com.qrlogi.api.html
-│   │   ├── resolvedMainClassName
 │   │   ├── resources
 │   │   │   └── main
 │   │   │       ├── application-docker.yml
@@ -100,21 +76,6 @@ QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 │   │   │       ├── static
 │   │   │       │   └── favicon.ico
 │   │   │       └── templates
-│   │   ├── test-results
-│   │   │   └── test
-│   │   │       ├── TEST-com.qrlogi.api.QrLogiApplicationTests.xml
-│   │   │       └── binary
-│   │   │           ├── output.bin
-│   │   │           ├── output.bin.idx
-│   │   │           └── results.bin
-│   │   └── tmp
-│   │       ├── bootJar
-│   │       │   └── MANIFEST.MF
-│   │       ├── compileJava
-│   │       │   └── previous-compilation-data.bin
-│   │       ├── compileTestJava
-│   │       │   └── previous-compilation-data.bin
-│   │       └── test
 │   ├── build.gradle
 │   └── src
 │       ├── main
@@ -166,20 +127,6 @@ QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 │                   └── qrlogi
 │                       └── api
 │                           └── QrLogiApplicationTests.java
-├── build
-│   ├── build.gradle
-│   ├── libs
-│   │   ├── QRLogi-0.0.1-SNAPSHOT-plain.jar
-│   │   └── QRLogi-0.0.1-SNAPSHOT.jar
-│   ├── reports
-│   │   └── problems
-│   │       └── problems-report.html
-│   ├── resolvedMainClassName
-│   └── tmp
-│       ├── bootJar
-│       │   └── MANIFEST.MF
-│       └── jar
-│           └── MANIFEST.MF
 ├── domain
 │   ├── build.gradle
 │   └── src
@@ -267,20 +214,10 @@ QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 │           │                       ├── AuthService.java
 │           │                       └── LoginUserDetailService.java
 │           └── resources
-├── gradle
-│   └── wrapper
-│       ├── gradle-wrapper.jar
-│       └── gradle-wrapper.properties
-├── gradlew
-├── gradlew.bat
-├── http
-│   ├── buyerRegisterRequest.http
-│   └── signRequest.http
 ├── infra
 │   └── docker-compose.yml
 └── settings.gradle
 
-142 directories, 122 files
 
 ```
 <br><br>
