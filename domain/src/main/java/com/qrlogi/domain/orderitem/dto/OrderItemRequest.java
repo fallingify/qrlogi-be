@@ -1,4 +1,4 @@
-package com.qrlogi.domain.orderitem.orderitem.dto;
+package com.qrlogi.domain.orderitem.dto;
 
 import lombok.Data;
 

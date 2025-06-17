@@ -233,3 +233,18 @@
 <br><br>
 **Snowflake**
 - orderitem일련번호에 적용
+
+<br><br>
+
+```
+└── domain
+    ├── buyer              : 구매자 정보 관리
+    ├── order              : 주문 생성 및 조회
+    ├── orderitem          : 주문 항목 단위 관리
+    ├── product            : 제품 관리
+    ├── shipment           : 출고 관리 
+    ├── shipmentitem       : 출고 항목 
+    ├── inspection         : 출고 검수
+    ├── payment            : 결제 관리 (예정)
+    └── user               : 사용자 인증 및 관리
+```

@@ -7,9 +7,9 @@ import com.qrlogi.domain.order.dto.OrderResponse;
 import com.qrlogi.domain.order.entity.OrderStatus;
 import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.order.repository.OrderRepository;
-import com.qrlogi.domain.orderitem.orderitem.dto.OrderItemDTO;
-import com.qrlogi.domain.orderitem.orderitem.entity.OrderItem;
-import com.qrlogi.domain.orderitem.orderitem.repository.OrderItemRepository;
+import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
+import com.qrlogi.domain.orderitem.entity.OrderItem;
+import com.qrlogi.domain.orderitem.repository.OrderItemRepository;
 import com.qrlogi.domain.product.entity.Product;
 import com.qrlogi.domain.product.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +60,7 @@ public class OrderServiceImpl implements OrderService {
                     return OrderItem.builder()
                             .order(order)
                             .product(product)
-                            .qty(req.getQty())
+                            .orderedQty(req.getQty())
                             .build();
                 })
                 .map(orderItemRepository::save)
@@ -96,7 +96,7 @@ public class OrderServiceImpl implements OrderService {
                     return toResponse(i, items);
                 })
                 .collect(Collectors.toList());
-    };
+    }
 
 
     @Transactional

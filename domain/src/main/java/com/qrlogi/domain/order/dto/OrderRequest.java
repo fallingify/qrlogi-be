@@ -1,6 +1,6 @@
 package com.qrlogi.domain.order.dto;
 
-import com.qrlogi.domain.orderitem.orderitem.dto.OrderItemRequest;
+import com.qrlogi.domain.orderitem.dto.OrderItemRequest;
 import lombok.Data;
 
 import java.util.List;

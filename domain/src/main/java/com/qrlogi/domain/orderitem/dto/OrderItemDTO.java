@@ -1,9 +1,9 @@
-package com.qrlogi.domain.orderitem.orderitem.dto;
+package com.qrlogi.domain.orderitem.dto;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 
-@Data
+@Getter
 @AllArgsConstructor
 public class OrderItemDTO {
     private String productName;

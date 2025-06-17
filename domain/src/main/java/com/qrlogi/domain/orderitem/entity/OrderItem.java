@@ -1,4 +1,4 @@
-package com.qrlogi.domain.orderitem.orderitem.entity;
+package com.qrlogi.domain.orderitem.entity;
 
 
 import com.qrlogi.domain.order.entity.Orders;
@@ -46,14 +46,13 @@ public class OrderItem {
     }
 
     private void updateShipmentStatus() {
-        if(shippedQty >= orderedQty) this.shipmentStatus = shipmentStatus;
-        else if(shippedQty > 0) this.shipmentStatus = ShipmentStatus.PARTIAL;
-        else this.shipmentStatus = shipmentStatus.PENDING;
+        if(shippedQty >= orderedQty) {this.shipmentStatus = ShipmentStatus.SHIPPED;}
+        else if(shippedQty > 0) {this.shipmentStatus = ShipmentStatus.PARTIAL;}
+        else { this.shipmentStatus = ShipmentStatus.PENDING;}
     }
 
 
-
-
-
-
+    public int getQty() {
+        return this.orderedQty;
+    }
 }

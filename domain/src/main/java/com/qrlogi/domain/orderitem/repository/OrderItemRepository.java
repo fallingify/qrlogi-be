@@ -1,7 +1,7 @@
-package com.qrlogi.domain.orderitem.orderitem.repository;
+package com.qrlogi.domain.orderitem.repository;
 
 import com.qrlogi.domain.order.entity.Orders;
-import com.qrlogi.domain.orderitem.orderitem.entity.OrderItem;
+import com.qrlogi.domain.orderitem.entity.OrderItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

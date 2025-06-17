@@ -1,7 +1,6 @@
-package com.qrlogi.domain.ShipmentLog.entity;
+package com.qrlogi.domain.inspection.entity;
 
-import com.qrlogi.domain.shipmentitem.entity.ShipmentItem;
-import com.qrlogi.domain.user.entity.User;
+import com.qrlogi.domain.orderitem.entity.OrderItem;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -13,13 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class ShippmentLog {
+public class ScanLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String orderItemId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_item_id")
+    private OrderItem orderItem;
 
     private LocalDateTime scannedAt;
 

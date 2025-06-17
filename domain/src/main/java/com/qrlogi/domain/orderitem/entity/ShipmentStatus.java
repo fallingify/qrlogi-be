@@ -1,4 +1,4 @@
-package com.qrlogi.domain.orderitem.orderitem.entity;
+package com.qrlogi.domain.orderitem.entity;
 
 public enum ShipmentStatus {
     PENDING, PARTIAL, SHIPPED
