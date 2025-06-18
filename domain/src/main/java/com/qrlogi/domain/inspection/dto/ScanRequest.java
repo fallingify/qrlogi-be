@@ -7,7 +7,7 @@ import lombok.Getter;
 public class ScanRequest {
 
     private Long orderItemId;
-    private int qty;
     private String worker;
+    //스캔1번당 +1qty
 
 }
