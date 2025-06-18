@@ -125,7 +125,11 @@ public class OrderServiceImpl implements OrderService {
                 order.getOrderDate(),
                 order.getOrderStatus().name(),
                 items.stream()
-                        .map(i -> new OrderItemDTO(i.getProduct().getName(), i.getQty()))
+                        .map(i -> new OrderItemDTO(
+                                i.getProduct().getName(),
+                                i.getQty(),
+                                i.getShippedQty(),
+                                i.getShipmentStatus().name()))
                         .collect(Collectors.toList())
         );
     }

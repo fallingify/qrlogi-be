@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("api/v1/orders")
+@RequestMapping("/api/v1/orders")
 @RequiredArgsConstructor
 public class OrderController {
 
@@ -38,7 +38,7 @@ public class OrderController {
     @PatchMapping("/{orderId}/cancel")
     public ResponseEntity<OrderResponse> cancelOrder(@PathVariable String orderId){
         orderService.cancelOrder(orderId);
-        return ResponseEntity.ok(orderService.getOrderById(orderId));
+        return ResponseEntity.noContent().build();
     }
 
 

@@ -1,9 +1,9 @@
 package com.qrlogi.domain.payment.entity;
 
-import com.qrlogi.domain.shipment.entity.Shipment;
+
+import com.qrlogi.domain.shipment.entity.Shipments;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -19,13 +19,12 @@ public class Payment {
     @Column(length = 36)
     private String id; // UUID
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "payment_num", nullable = false, unique = true)
     private Long paymentNum; //내부식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipment_id", nullable = false)
-    private Shipment shipment;
+    private Shipments shipment;
 
     @Column(nullable = false)
     private Integer amount;

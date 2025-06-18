@@ -20,7 +20,6 @@ public class Shipments {
     @Column(length = 36)
     private String id; // UUID
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "shipment_num", nullable = false, unique = true)
     private Long shipmentNum; //내부식별자
 

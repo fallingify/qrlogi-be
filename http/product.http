@@ -1,5 +1,11 @@
-### GET request to example server
-GET https://examples.http-client.intellij.net/get
-    ?generated-in=IntelliJ IDEA
+# 상품등록
+POST http://localhost:8080/api/v1/products
+Content-type: application/json
 
-###
+{
+  "name": "스마트워치",
+  "modelCode": "SW2025X",
+  "unitPrice": 120000,
+  "category": "전자기기"
+}
+
