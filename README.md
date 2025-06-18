@@ -4,6 +4,24 @@
 **서비스플로우** 
 - QR 기반 스캔 처리 → 수량 변화 감지 → 추적 로그 저장
 ```aiignore
+[회원/바이어/상품 등록]
+        ↓
+[주문(Order) 생성]
+        ↓
+[출고 등록 (Shipment)]
+        ↓
+[출고 항목 생성 (ShipmentItem)]
+        ↓
+[QR 스캔 (→ OrderItem.shippedQty 증가)]
+        ↓
+[전체 출고 완료 판단 → 상태 변경]
+        ↓
+[검수 API로 검수자 기록 → 최종 완료]
+```
+<br>
+
+**Inspection**
+```aiignore
   1) 작업자가 출고 현장에서 QR코드를 스캔
   2) 스캔된 QR코드는 orderItemId 혹은 productId와 매핑됨
   3) 스캔 수량이 누적되면서 출고 수량이 증가
@@ -237,6 +255,7 @@
 
 <br><br>
 
+**도메인구성**
 ```
 └── domain
     ├── buyer              : 구매자 정보 관리

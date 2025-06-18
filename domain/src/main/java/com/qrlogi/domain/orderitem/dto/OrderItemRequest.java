@@ -1,8 +1,11 @@
 package com.qrlogi.domain.orderitem.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OrderItemRequest {
 
     private Long productId;

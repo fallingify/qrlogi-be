@@ -9,6 +9,7 @@ import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.order.repository.OrderRepository;
 import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
+import com.qrlogi.domain.orderitem.entity.ShipmentStatus;
 import com.qrlogi.domain.orderitem.repository.OrderItemRepository;
 import com.qrlogi.domain.product.entity.Product;
 import com.qrlogi.domain.product.repository.ProductRepository;
@@ -61,6 +62,8 @@ public class OrderServiceImpl implements OrderService {
                             .order(order)
                             .product(product)
                             .orderedQty(req.getQty())
+                            .shippedQty(0)
+                            .shipmentStatus(ShipmentStatus.PENDING)
                             .build();
                 })
                 .map(orderItemRepository::save)
