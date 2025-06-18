@@ -18,18 +18,11 @@
         ↓
 [검수 API로 검수자 기록 → 최종 완료]
 ```
+
 <br>
 
-**Inspection**
-```aiignore
-  1) 작업자가 출고 현장에서 QR코드를 스캔
-  2) 스캔된 QR코드는 orderItemId 혹은 productId와 매핑됨
-  3) 스캔 수량이 누적되면서 출고 수량이 증가
-  4) ShipmentLog에 스캔 내역이 저장됨 
-  5) 출고 수량이 주문 수량과 일치하면 상태를 “완료”로 변경
-```
+- 구상안
 
-구상안(미구현)
 ```aiignore
 1) 주문 승인 시, 각 주문 항목에 대해 제품명, 수량, 박스 단위 정보를 등록
 
@@ -47,6 +40,22 @@
 
 8) 바이어에게 출고 이력 및 검수 내역 전달
 ```
+<br>
+
+- Inspection 상세 
+
+```aiignore
+  1) 작업자가 출고 현장에서 QR코드를 스캔
+  
+  2) 스캔된 QR코드는 orderItemId 혹은 productId와 매핑됨
+  
+  3) 스캔 수량이 누적되면서 출고 수량이 증가
+  
+  4) ShipmentLog에 스캔 내역이 저장됨 
+  
+  5) 출고 수량이 주문 수량과 일치하면 상태를 “완료”로 변경
+```
+
 
 <br>
 <br>
@@ -62,116 +71,6 @@
 
 ```
 .
-├── Dockerfile
-├── api
-│   ├── build
-│   │   ├── classes
-│   │   │   └── java
-│   │   │       ├── main
-│   │   │       │   ├── com
-│   │   │       │   │   └── qrlogi
-│   │   │       │   │       └── api
-│   │   │       │   │           ├── QrLogiApplication.class
-│   │   │       │   │           ├── config
-│   │   │       │   │           │   ├── DataSrcConfig.class
-│   │   │       │   │           │   ├── JwtTokenFilter.class
-│   │   │       │   │           │   ├── JwtTokenProvider.class
-│   │   │       │   │           │   ├── SecurityConfig.class
-│   │   │       │   │           │   └── SwaggerConfig.class
-│   │   │       │   │           ├── controller
-│   │   │       │   │           │   ├── BuyerController.class
-│   │   │       │   │           │   ├── OrderController.class
-│   │   │       │   │           │   ├── OrderItemController.class
-│   │   │       │   │           │   ├── PaymentController.class
-│   │   │       │   │           │   ├── ProductController.class
-│   │   │       │   │           │   ├── QrScanlogController.class
-│   │   │       │   │           │   ├── ShipmentController.class
-│   │   │       │   │           │   ├── ShipmentItemController.class
-│   │   │       │   │           │   └── UserController.class
-│   │   │       │   │           └── health
-│   │   │       │   │               └── HealthCheckController.class
-│   │   │       │   └── flgfy
-│   │   │       │       └── qrlogi
-│   │   │       │           └── common
-│   │   │       │               ├── dto
-│   │   │       │               │   ├── CommonResponse.class
-│   │   │       │               │   ├── ErrorInfo$ErrorInfoBuilder.class
-│   │   │       │               │   └── ErrorInfo.class
-│   │   │       │               ├── enums
-│   │   │       │               │   └── ReturnCode.class
-│   │   │       │               ├── exception
-│   │   │       │               │   ├── BusinessException.class
-│   │   │       │               │   └── GlobalExceptionHandler.class
-│   │   │       │               └── util
-│   │   │       │                   └── DateTimeUtil.class
-│   │   │       └── test
-│   │   │           └── com
-│   │   │               └── qrlogi
-│   │   │                   └── api
-│   │   │                       └── QrLogiApplicationTests.class
-│   │   ├── libs
-│   │   ├── resources
-│   │   │   └── main
-│   │   │       ├── application-docker.yml
-│   │   │       ├── application.yml
-│   │   │       ├── sql
-│   │   │       │   └── erd.sql
-│   │   │       ├── static
-│   │   │       │   └── favicon.ico
-│   │   │       └── templates
-│   ├── build.gradle
-│   └── src
-│       ├── main
-│       │   ├── java
-│       │   │   └── com
-│       │   │       └── qrlogi
-│       │   │           └── api
-│       │   │               ├── QrLogiApplication.java
-│       │   │               ├── common
-│       │   │               │   ├── dto
-│       │   │               │   │   ├── CommonResponse.java
-│       │   │               │   │   └── ErrorInfo.java
-│       │   │               │   ├── enums
-│       │   │               │   │   └── ReturnCode.java
-│       │   │               │   ├── exception
-│       │   │               │   │   ├── BusinessException.java
-│       │   │               │   │   └── GlobalExceptionHandler.java
-│       │   │               │   └── util
-│       │   │               │       └── DateTimeUtil.java
-│       │   │               ├── config
-│       │   │               │   ├── DataSrcConfig.java
-│       │   │               │   ├── JwtTokenFilter.java
-│       │   │               │   ├── JwtTokenProvider.java
-│       │   │               │   ├── SecurityConfig.java
-│       │   │               │   └── SwaggerConfig.java
-│       │   │               ├── controller
-│       │   │               │   ├── BuyerController.java
-│       │   │               │   ├── OrderController.java
-│       │   │               │   ├── OrderItemController.java
-│       │   │               │   ├── PaymentController.java
-│       │   │               │   ├── ProductController.java
-│       │   │               │   ├── QrScanlogController.java
-│       │   │               │   ├── ShipmentController.java
-│       │   │               │   ├── ShipmentItemController.java
-│       │   │               │   └── UserController.java
-│       │   │               └── health
-│       │   │                   └── HealthCheckController.java
-│       │   └── resources
-│       │       ├── application-docker.yml
-│       │       ├── application.yml
-│       │       ├── sql
-│       │       │   └── erd.sql
-│       │       ├── static
-│       │       │   └── favicon.ico
-│       │       └── templates
-│       └── test
-│           └── java
-│               └── com
-│                   └── qrlogi
-│                       └── api
-│                           └── QrLogiApplicationTests.java
-├── domain
-│   ├── build.gradle
 │   └── src
 │       └── main
 │           ├── java
@@ -188,6 +87,16 @@
 │           │               │   │   └── BuyerRepository.java
 │           │               │   └── service
 │           │               │       └── BuyerService.java
+│           │               ├── inspection
+│           │               │   ├── dto
+│           │               │   │   └── ScanRequest.java
+│           │               │   ├── entity
+│           │               │   │   ├── ScanLog.java
+│           │               │   │   └── ScanStatus.java
+│           │               │   ├── repository
+│           │               │   │   └── ScanLogRepository.java
+│           │               │   └── service
+│           │               │       └── ScanService.java
 │           │               ├── order
 │           │               │   ├── dto
 │           │               │   │   ├── OrderRequest.java
@@ -196,17 +105,21 @@
 │           │               │   │   ├── OrderStatus.java
 │           │               │   │   └── Orders.java
 │           │               │   ├── repository
+│           │               │   │   └── OrderRepository.java
 │           │               │   └── service
-│           │               │       └── OrderService.java
+│           │               │       ├── OrderService.java
+│           │               │       └── OrderServiceImpl.java
 │           │               ├── orderitem
-│           │               │   └── orderitem
-│           │               │       ├── dto
-│           │               │       │   ├── OrderItemDTO.java
-│           │               │       │   └── OrderItemRequest.java
-│           │               │       ├── entity
-│           │               │       │   └── OrderItem.java
-│           │               │       ├── repository
-│           │               │       └── service
+│           │               │   ├── dto
+│           │               │   │   ├── OrderItemDTO.java
+│           │               │   │   └── OrderItemRequest.java
+│           │               │   ├── entity
+│           │               │   │   ├── OrderItem.java
+│           │               │   │   └── ShipmentStatus.java
+│           │               │   ├── repository
+│           │               │   │   └── OrderItemRepository.java
+│           │               │   └── service
+│           │               │       └── OrderItemService.java
 │           │               ├── payment
 │           │               │   ├── dto
 │           │               │   ├── entity
@@ -217,29 +130,21 @@
 │           │               │   └── service
 │           │               ├── product
 │           │               │   ├── dto
+│           │               │   │   └── ProductDTO.java
 │           │               │   ├── entity
 │           │               │   │   └── Product.java
 │           │               │   ├── repository
+│           │               │   │   └── ProductRepository.java
 │           │               │   └── service
-│           │               ├── qrscanlog
-│           │               │   ├── dto
-│           │               │   ├── entity
-│           │               │   │   ├── QrScanLog.java
-│           │               │   │   └── ScanStatus.java
-│           │               │   ├── repository
-│           │               │   └── service
+│           │               │       └── ProductService.java
 │           │               ├── shipment
 │           │               │   ├── dto
 │           │               │   ├── entity
-│           │               │   │   └── Shipment.java
+│           │               │   │   ├── ShipmentItem.java
+│           │               │   │   └── Shipments.java
 │           │               │   ├── repository
 │           │               │   └── service
-│           │               ├── shipmentitem
-│           │               │   ├── dto
-│           │               │   ├── entity
-│           │               │   │   └── ShipmentItem.java
-│           │               │   ├── repository
-│           │               │   └── service
+│           │               │       └── ShipmentService.java
 │           │               └── user
 │           │                   ├── dto
 │           │                   │   ├── DeleteRequest.java
@@ -257,9 +162,6 @@
 │           │                       ├── AuthService.java
 │           │                       └── LoginUserDetailService.java
 │           └── resources
-├── infra
-│   └── docker-compose.yml
-└── settings.gradle
 
 
 ```
