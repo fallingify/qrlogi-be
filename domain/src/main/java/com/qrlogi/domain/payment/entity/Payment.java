@@ -1,7 +1,7 @@
 package com.qrlogi.domain.payment.entity;
 
 
-import com.qrlogi.domain.shipment.entity.Shipments;
+import com.qrlogi.domain.shipment.entity.Shipment;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -24,7 +24,7 @@ public class Payment {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "shipment_id", nullable = false)
-    private Shipments shipment;
+    private Shipment shipment;
 
     @Column(nullable = false)
     private Integer amount;

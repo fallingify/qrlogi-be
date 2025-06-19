@@ -1,19 +1,17 @@
-package com.qrlogi.domain.shipment.entity;
+package com.qrlogi.domain.shippmentItem.entity;
 
-
+import com.qrlogi.domain.orderitem.entity.OrderItem;
 import com.qrlogi.domain.product.entity.Product;
+import com.qrlogi.domain.shipment.entity.Shipment;
 import jakarta.persistence.*;
 import lombok.*;
 
-/**
- 실제 출고된 상품 항목
- */
 @Entity
+@Table(name = "shipment_items")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-@Table(name = "shipment_items")
 public class ShipmentItem {
 
     @Id
@@ -21,14 +19,21 @@ public class ShipmentItem {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="shipment_id", nullable = false)
-    private Shipments shipment;
+    @JoinColumn(name = "shipments_id", nullable = false)
+    private Shipment shipment;
+
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="product_id", nullable = false)
+    @JoinColumn(name = "product_id")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "order_item_id", nullable = false)
+    private OrderItem orderItem;
 
     @Column(nullable = false)
     private int qty;
+
+
 
 }

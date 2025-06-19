@@ -2,8 +2,10 @@ package com.qrlogi.domain.inspection.dto;
 
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
+@NoArgsConstructor
 public class ScanRequest {
 
     private Long orderItemId;

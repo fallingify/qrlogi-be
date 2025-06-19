@@ -1,7 +1,7 @@
 package com.qrlogi.domain.inspection.service;
 
 import com.qrlogi.domain.inspection.dto.ScanRequest;
-import com.qrlogi.domain.inspection.dto.ScanResult;
+import com.qrlogi.domain.inspection.dto.ScanResponse;
 import com.qrlogi.domain.inspection.entity.ScanLog;
 import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
@@ -21,19 +21,15 @@ public class ScanService {
     private final OrderItemRepository orderItemRepository;
 
     @Transactional
-    public ScanResult doScan(ScanRequest scanRequest) {
+    public ScanResponse doScan(ScanRequest scanRequest) {
         OrderItem orderItem = orderItemRepository.findById(scanRequest.getOrderItemId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 항목이 존재하지 않습니다."));
-
-
-        if (orderItem.getShippedQty() >= orderItem.getOrderedQty()) {
-            return new ScanResult(null, ScanStatus.DUPLICATE);
-        }
 
 
         orderItem.addShippingQty(1);
 
 
+        //스캔로그 -> 추후 바이어한테 제공할 정보
         ScanLog scanLog = ScanLog.builder()
                 .orderItem(orderItem)
                 .scannedAt(LocalDateTime.now())
@@ -42,8 +38,11 @@ public class ScanService {
 
         ScanLog savedLog = scanLogRepository.save(scanLog);
 
-        return ScanResult.of(savedLog, ScanStatus.SUCCESS);
+        return
 
 
     }
+
+
+
 }

@@ -28,6 +28,8 @@ public class ScanLog {
 
     private String scannedBy; //작업자이름
 
+    private String productSerial;
+
 
 
 

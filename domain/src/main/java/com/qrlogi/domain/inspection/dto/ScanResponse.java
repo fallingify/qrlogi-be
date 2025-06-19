@@ -5,7 +5,6 @@ import com.qrlogi.domain.inspection.entity.ScanStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +22,9 @@ public class ScanResponse {
     private LocalDateTime scannedAt;
     private ScanStatus scanStatus;
 
-    public static ScanResponse toDTO(ScanLog scanLog, ScanStatus scanStatus) {
+
+
+    public static ScanResponse toDTO(ScanLog scanLog, ScanStatus status) {
         return new ScanResponse(
                 scanLog.getId(),
                 scanLog.getOrderItem().getId(),
@@ -32,8 +33,7 @@ public class ScanResponse {
                 scanLog.getScannedBy(),
                 scanLog.getOrderItem().getShipmentStatus().name(),
                 scanLog.getScannedAt(),
-                scanStatus
-
+                status
         );
     }
 
