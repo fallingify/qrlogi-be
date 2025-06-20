@@ -10,10 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/scan")
 @RequiredArgsConstructor
-public class ScanController {
+public class InspectionController {
 
     private final ScanService scanService;
-
 
     @PostMapping
     public ResponseEntity<ScanResponse> scan(@RequestBody ScanRequest scanRequest) {
