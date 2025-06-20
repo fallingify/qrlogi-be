@@ -34,12 +34,12 @@ public class ScanService {
                 .orderItem(orderItem)
                 .scannedAt(LocalDateTime.now())
                 .scannedBy(scanRequest.getWorker())
+                .scannedQty(1)
                 .build();
 
         ScanLog savedLog = scanLogRepository.save(scanLog);
 
-        return
-
+        return ScanResponse.toDTO(savedLog, ScanStatus.SUCCESS);
 
     }
 

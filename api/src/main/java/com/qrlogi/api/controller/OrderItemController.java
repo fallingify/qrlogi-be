@@ -1,12 +1,11 @@
 package com.qrlogi.api.controller;
 
 import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
+import com.qrlogi.domain.orderitem.dto.OrderItemSerialResponse;
 import com.qrlogi.domain.orderitem.service.OrderItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 
@@ -17,12 +16,18 @@ public class OrderItemController {
 
     private final OrderItemService orderItemService;
 
+    //보기
     @GetMapping("/{orderId}")
     public List<OrderItemDTO> getOrderItems(@PathVariable("orderId") String orderId)  {
         return orderItemService.getOrderItems(orderId);
 
     }
 
+    //생성
+    @PostMapping("/{orderId}/serials")
+    public List<OrderItemSerialResponse> createSerial(@PathVariable("orderId") String orderId) {
+        return orderItemService.generateSerials(orderId);
+    }
 
 
 

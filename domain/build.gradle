@@ -38,5 +38,14 @@ dependencies {
 
     //swagger
     implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.2.0'
+
+
+    //qr
+    implementation 'com.google.zxing:core:3.5.2'
+    implementation 'com.google.zxing:javase:3.5.2'
+
+
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.603'
+
 }
 
