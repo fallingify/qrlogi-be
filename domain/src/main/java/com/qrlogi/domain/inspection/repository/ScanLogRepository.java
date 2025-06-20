@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ScanLogRepository extends JpaRepository<ScanLog, Long> {
 
-    @Query("SELECT COUNT(sl) FROM ScanLog sl WHERE sl.orderItem.id = :orderItemId")
-    long countByOrderItemId(@Param("orderItemId") Long orderItemId);
+    @Query("SELECT MAX(sl.scannedQty) FROM ScanLog sl WHERE sl.orderItem.id = :orderItemId")
+    Integer findMaxScannedQty(@Param("orderItemId") Long orderItemId);
 
 }

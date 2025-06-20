@@ -25,7 +25,12 @@ public class ScanService {
         OrderItem orderItem = orderItemRepository.findById(scanRequest.getOrderItemId())
                 .orElseThrow(() -> new IllegalArgumentException("주문 항목이 존재하지 않습니다."));
 
+        // 스캔 수량 + 1
+        Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());
+        int scannedQty = (lastQty == null) ? 1 : lastQty + 1;
 
+
+        // OrderItem의 출고 수량 증가
         orderItem.addShippingQty(1);
 
 
@@ -34,7 +39,7 @@ public class ScanService {
                 .orderItem(orderItem)
                 .scannedAt(LocalDateTime.now())
                 .scannedBy(scanRequest.getWorker())
-                .scannedQty(1)
+                .scannedQty(scannedQty)
                 .build();
 
         ScanLog savedLog = scanLogRepository.save(scanLog);

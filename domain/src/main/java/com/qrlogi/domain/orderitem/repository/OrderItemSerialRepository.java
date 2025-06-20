@@ -7,6 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface OrderItemSerialRepository  extends JpaRepository<OrderItemSerial, Long> {
-    boolean existsBySerial(String serial);
 
 }
