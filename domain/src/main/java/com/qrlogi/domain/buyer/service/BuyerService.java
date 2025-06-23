@@ -6,6 +6,7 @@ import com.qrlogi.domain.buyer.dto.BuyerResponse;
 import com.qrlogi.domain.buyer.entity.Buyer;
 
 import com.qrlogi.domain.buyer.repository.BuyerRepository;
+import com.qrlogi.domain.buyer.validator.BuyerValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +18,12 @@ import java.util.stream.Collectors;
 public class BuyerService {
 
     private final BuyerRepository buyerRepository;
+    private final BuyerValidator buyerValidator;
 
     public BuyerResponse registerBuyer(BuyerRequest buyerRequest) {
-        if(buyerRepository.existsByEmail(buyerRequest.getEmail())) {
-            throw new IllegalArgumentException("Email already in use");
-        }
-        if(buyerRepository.existsByBusinessNumber(buyerRequest.getBussinessNumber())){
-            throw new IllegalArgumentException("Business number already in use");
-        }
+
+        buyerValidator.validateDuplicated(buyerRequest.getEmail(), buyerRequest.getBussinessNumber());
+
 
         Buyer newBuyer = Buyer.builder()
                 .name(buyerRequest.getName())
@@ -39,6 +38,7 @@ public class BuyerService {
     }
 
     private BuyerResponse toResponse(Buyer savedBuyer) {
+
         BuyerResponse response = new BuyerResponse();
         response.setName(savedBuyer.getName());
         response.setEmail(savedBuyer.getEmail());
@@ -48,6 +48,7 @@ public class BuyerService {
     }
 
     public List<BuyerResponse> getAllBuyers() {
+
         return buyerRepository.findAll().stream()
                 .map(this::toResponse)
                 .collect(Collectors.toList());
