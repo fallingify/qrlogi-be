@@ -12,7 +12,7 @@ import java.util.List;
 public class OrderResponse {
 
     private String orderId;
-    private Long orderNumber;
+    private String orderNumber;
     private String buyerName;
     private LocalDateTime orderTime;
     private String status;

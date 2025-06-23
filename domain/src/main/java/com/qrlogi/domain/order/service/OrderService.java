@@ -17,7 +17,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -32,12 +31,11 @@ public class OrderService {
     private final OrderValidator orderValidator;
     private final ProductValidator productValidator;
 
-
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
 
         Buyer buyer = orderValidator.validateBuyerExists(request.getBuyerId());
-        Long orderNum = getOrderNum();
+        String orderNum = OrderNumUtil.getOrderNum();
         Orders order = Orders.builder()
                 .id(UUID.randomUUID().toString())
                 .orderNumber(orderNum)
@@ -102,14 +100,6 @@ public class OrderService {
         order.cancel();
     }
 
-
-    private static Long getOrderNum() {
-
-        String timePart = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyyMMddHHmmss"));
-        int random = (int)(Math.random() * 900 + 100);
-
-        return Long.parseLong(timePart + random);
-    }
 
 
     private OrderResponse toResponse(Orders order, List<OrderItem> items) {
