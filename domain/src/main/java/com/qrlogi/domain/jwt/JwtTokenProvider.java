@@ -1,4 +1,4 @@
-package com.qrlogi.api.config;
+package com.qrlogi.domain.jwt;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
