@@ -21,7 +21,7 @@ public class Orders {
     private String id; // UUID
 
     @Column(name = "order_number", nullable = false, unique = true)
-    private Long orderNumber; ///Snowflake적용한 내부 식별자
+    private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)

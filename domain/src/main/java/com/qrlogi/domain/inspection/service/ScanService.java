@@ -5,6 +5,7 @@ import com.qrlogi.domain.inspection.dto.ScanResponse;
 import com.qrlogi.domain.inspection.entity.ScanLog;
 import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
+import com.qrlogi.domain.orderitem.OrderItemValidator.OrderItemValidator;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
 import com.qrlogi.domain.orderitem.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -18,12 +19,12 @@ import java.time.LocalDateTime;
 public class ScanService {
 
     private final ScanLogRepository scanLogRepository;
-    private final OrderItemRepository orderItemRepository;
+    private final OrderItemValidator orderItemValidator;
 
     @Transactional
     public ScanResponse doScan(ScanRequest scanRequest) {
-        OrderItem orderItem = orderItemRepository.findById(scanRequest.getOrderItemId())
-                .orElseThrow(() -> new IllegalArgumentException("주문 항목이 존재하지 않습니다."));
+
+        OrderItem orderItem = orderItemValidator.validateByOrderItemIdExists(scanRequest.getOrderItemId());
 
         // 스캔 수량 + 1
         Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());

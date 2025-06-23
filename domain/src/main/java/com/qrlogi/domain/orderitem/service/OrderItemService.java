@@ -2,6 +2,7 @@ package com.qrlogi.domain.orderitem.service;
 
 import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.order.repository.OrderRepository;
+import com.qrlogi.domain.order.validator.OrderValidator;
 import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
 import com.qrlogi.domain.orderitem.dto.OrderItemSerialResponse;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
@@ -22,17 +23,14 @@ import java.util.stream.Collectors;
 public class OrderItemService {
 
     private final OrderItemRepository orderItemRepository;
-    private final OrderRepository orderRepository;
     private final OrderItemSerialRepository orderItemSerialRepository;
     private final SnowflakeIdGenerator idGenerator;
     private final QrService qrService;
-
-
+    private final OrderValidator orderValidator;
 
     public List<OrderItemDTO> getOrderItems(String orderId) {
 
-       Orders order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("없는 주문입니다."));
-
+       Orders order = orderValidator.validateOrderExists(orderId);
        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
 
         return orderItems.stream()
@@ -40,12 +38,11 @@ public class OrderItemService {
                 .collect(Collectors.toList());
     }
 
-
+    //TODO: OrderItemServiceImple → savedItem → save별도로 분리하기  → list만들어서 saveAll로 처리 (단건처리비추), @Transactional 어노테이션 다 붙이기
     @Transactional
     public List<OrderItemSerialResponse> generateSerials(String orderId) {
 
-        Orders order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("없는 주문입니다."));
-
+        Orders order = orderValidator.validateOrderExists(orderId);
         List<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
         List<OrderItemSerial> allSerials = new ArrayList<>();
 
@@ -56,8 +53,6 @@ public class OrderItemService {
             for (int i = 0; i < quata; i++) {
                 String serialId = String.valueOf(idGenerator.nextId());
                 String qrUrl = qrService.createQrUrl(serialId); //qrImgURL을 생성
-
-
                 OrderItemSerial serial = OrderItemSerial.builder()
                         .serial(serialId)
                         .isScanned(false)
@@ -79,10 +74,6 @@ public class OrderItemService {
                 .map(OrderItemSerialResponse::toDTO)
                 .collect(Collectors.toList());
 
-    }//end
+    }
 
-
-
-
-
-}//end
+}
