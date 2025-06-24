@@ -18,8 +18,6 @@ repositories {
 
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-security'
 
@@ -51,4 +49,9 @@ dependencies {
 
     // AWS S3
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.603'
+
+
+    //redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.24.0'
 }
+
