@@ -1,11 +1,14 @@
 package com.qrlogi.domain.order.dto;
 
 import com.qrlogi.domain.orderitem.dto.OrderItemRequest;
-import lombok.Data;
+import lombok.*;
 
 import java.util.List;
 
-@Data
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class OrderRequest {
 
     private Long buyerId;

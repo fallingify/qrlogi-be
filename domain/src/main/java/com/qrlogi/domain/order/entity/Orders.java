@@ -20,18 +20,18 @@ public class Orders {
     @Column(length = 36)
     private String id; // UUID
 
-    @Column(name = "order_number", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Buyer buyer;
 
-    @Column(name = "order_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime orderDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "order_status", nullable = false)
+    @Column(nullable = false)
     private OrderStatus orderStatus;
 
 

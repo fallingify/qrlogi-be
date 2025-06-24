@@ -1,8 +1,10 @@
 package com.qrlogi.domain.user.dto;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
 
-@Data
+@Getter
+@Builder
 public class LoginResponse {
     private String token;
 

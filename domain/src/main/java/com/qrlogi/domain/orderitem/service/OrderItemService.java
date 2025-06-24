@@ -1,7 +1,6 @@
 package com.qrlogi.domain.orderitem.service;
 
 import com.qrlogi.domain.order.entity.Orders;
-import com.qrlogi.domain.order.repository.OrderRepository;
 import com.qrlogi.domain.order.validator.OrderValidator;
 import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
 import com.qrlogi.domain.orderitem.dto.OrderItemSerialResponse;
@@ -14,9 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Service
 @RequiredArgsConstructor
@@ -38,42 +37,52 @@ public class OrderItemService {
                 .collect(Collectors.toList());
     }
 
-    //TODO: OrderItemServiceImple → savedItem → save별도로 분리하기  → list만들어서 saveAll로 처리 (단건처리비추), @Transactional 어노테이션 다 붙이기
+    //Serial생성
     @Transactional
     public List<OrderItemSerialResponse> generateSerials(String orderId) {
 
         Orders order = orderValidator.validateOrderExists(orderId);
-        List<OrderItem> orderItems = orderItemRepository.findAllByOrder(order);
-        List<OrderItemSerial> allSerials = new ArrayList<>();
+        List<OrderItem> allOrderItems = orderItemRepository.findAllByOrder(order);
 
-        for (OrderItem item : orderItems) {
-            int quata = item.getOrderedQty();
-            List<OrderItemSerial> serials = new ArrayList<>();
+        List<OrderItemSerial> serialsToSave = allOrderItems.stream()
+                .map(this::createSerialsForOrderItem)
+                .flatMap(List::stream)
+                .toList();
 
-            for (int i = 0; i < quata; i++) {
-                String serialId = String.valueOf(idGenerator.nextId());
-                String qrUrl = qrService.createQrUrl(serialId); //qrImgURL을 생성
-                OrderItemSerial serial = OrderItemSerial.builder()
-                        .serial(serialId)
-                        .isScanned(false)
-                        .orderItem(item)
-                        .createdAt(LocalDateTime.now())
-                        .qrImgUrl(qrUrl)
-                        .build();
+        orderItemSerialRepository.saveAll(serialsToSave);
 
-                serials.add(serial);
-            }
-
-            orderItemSerialRepository.saveAll(serials);
-            allSerials.addAll(serials);
-
-
-        }
-
-        return allSerials.stream()
+        return serialsToSave.stream()
                 .map(OrderItemSerialResponse::toDTO)
-                .collect(Collectors.toList());
+                .toList();
 
     }
+
+
+    //Serial생성을 위한 OrderItem 루프, createOrderItemSerial호출
+    private List<OrderItemSerial> createSerialsForOrderItem(OrderItem orderItem) {
+
+        int orderedQty = orderItem.getOrderedQty();
+
+        return IntStream.range(0, orderedQty)
+                .mapToObj(i -> createOrderItemSerial(orderItem)).toList();
+
+    }
+
+    //일련변호 생성된거 주입
+    private OrderItemSerial createOrderItemSerial(OrderItem orderItem) {
+        String serial = String.valueOf(idGenerator.nextId());
+        String qrUrl = qrService.createQrUrl(serial);
+
+        return OrderItemSerial.builder()
+                .serial(serial)
+                .isScanned(false)
+                .orderItem(orderItem)
+                .createdAt(LocalDateTime.now())
+                .qrImgUrl(qrUrl)
+                .build();
+
+    }
+
+
 
 }

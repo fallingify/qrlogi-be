@@ -21,6 +21,7 @@ public class ScanService {
     private final ScanLogRepository scanLogRepository;
     private final OrderItemValidator orderItemValidator;
 
+    //TODO : Redisson 분산 락 적용, scannedBy 스캔 > scannedQty 은 Lock을 걸어야 한다.
     @Transactional
     public ScanResponse doScan(ScanRequest scanRequest) {
 
