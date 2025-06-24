@@ -7,6 +7,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
+import com.google.zxing.oned.Code128Writer;
 import com.google.zxing.qrcode.QRCodeWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,6 +33,7 @@ public class QrService {
     //img로 변환
     //s3저장
     //url을 반환(접속용)
+    //TODO : Barcode도 추가
     public String createQrUrl(String serialId) {
 
         ByteArrayOutputStream outputStream = null;
@@ -68,8 +70,52 @@ public class QrService {
 
     }
 
+    public String createBarcodeUrl(String serialId) {
+
+        ByteArrayOutputStream outputStream = null;
+        ByteArrayInputStream inputStream = null;
+
+        try {
+            BufferedImage qrImg = createBarcodeImg(serialId); //qr 생성
+
+            outputStream = new ByteArrayOutputStream();
+            ImageIO.write(qrImg, "png", outputStream);
+            byte[] imgBytes = outputStream.toByteArray();
+            inputStream = new ByteArrayInputStream(imgBytes);
+
+            String fileName = "barcode/" + serialId + ".png";
+            ObjectMetadata metadata = new ObjectMetadata();
+            metadata.setContentLength(imgBytes.length);
+            metadata.setContentType("image/png");
+
+            amazonS3.putObject(
+                    new PutObjectRequest(bucketName, fileName, inputStream, metadata)
+            );
+
+            return amazonS3.getUrl(bucketName, fileName).toString();
+
+
+        } catch (IOException | WriterException e) {
+            throw new RuntimeException("Barcode 이미지 생성 실패", e);
+
+        } finally {
+            try { if (inputStream != null) inputStream.close();  } catch (IOException ignored) {}
+            try { if (outputStream != null) outputStream.close();  } catch (IOException ignored) {}
+        }
+
+
+    }
+
+    //QRCode Image 생성
     private BufferedImage createQrImg(String serialId) throws WriterException {
         BitMatrix matrix = new QRCodeWriter().encode(serialId, BarcodeFormat.QR_CODE, 150, 150);
+        return MatrixToImageWriter.toBufferedImage(matrix);
+
+    }
+
+    //Barcode Image 생성
+    public BufferedImage createBarcodeImg(String serialId) throws WriterException {
+        BitMatrix matrix = new Code128Writer().encode(serialId, BarcodeFormat.CODE_128, 400, 150);
         return MatrixToImageWriter.toBufferedImage(matrix);
 
     }

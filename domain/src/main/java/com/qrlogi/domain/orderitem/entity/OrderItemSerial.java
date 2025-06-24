@@ -34,7 +34,9 @@ public class OrderItemSerial {
     @Column(name = "qr_image_url")
     private String qrImgUrl; //QR
 
-
+    //TODO : 바코드도 추가
+    @Column(name = "barcode_image_url")
+    private String barcodeImgUrl;
 
     @CreatedDate
     private LocalDateTime createdAt;
