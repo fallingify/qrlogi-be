@@ -22,35 +22,37 @@
 <br>
 
 - 구상안
-
 ```aiignore
-1) 주문 승인 시, 각 주문 항목에 대해 제품명, 수량, 박스 단위 정보를 등록
+a. 바이어 주문 등록
+    * 주문 정보 및 품목 수량 입력
 
-2) 등록된 정보를 바탕으로 QR코드가 생성되고, 출력해 출고 현장에 부착
+b. QR코드와 바코드 이미지 생성
+    * 물품한개당 고유 serial ID 생성
+    * QR 코드 및 바코드 이미지 생성
+    
+c. 출력용 파일 생성
+    * 생성된 이미지를 프린터용지사이즈에 맞도록하여 PDF 파일로 변환
+    * 작업자가 인쇄하여 물품에 부착
 
-3) 출고 담당자는 박스에 부착된 QR코드를 스캔
+d. 스캔 및 출고 검수
+    * 작업자가 QR / 바코드 스캔
+    * 실시간 출고 수량 기록
+    * 중복 스캔 방지(동시성해결, 로그 저장)
 
-4) 스캔 시마다 해당 박스에 매핑된 orderItem의 출고 수량(shippedQty)이 누적
-
-5) 각 스캔 내역은 ShipmentLog에 저장되어 기록 유지
-
-6) 주문 수량(orderedQty)과 출고 수량(shippedQty)이 같아지면 상태를 SHIPPED로 변경
-
-7) 출고 완료 이후, 검수 기록은 구글 스프레드시트 또는 시스템 내에서 확인 가능
-
-8) 바이어에게 출고 이력 및 검수 내역 전달
+e. Google 스프레드시트로 보고
+    * 실제 적재수량(스캔됨)과 주문 수량 비교
+    * 검수 결과 자동 정리 후 스프레드시트 업로드
+    * 바이어에게 공유 가능
 ```
 <br>
+
 - 주문아이템에 대한 일련번호 생성 및 qr 생성 상세
-
 ```aiignore
-1. 제품 등록 → 주문 발생 → QR/일련번호 생성   :  Spring REST API + DB 트랜잭션 처리
-2. 스캔/검수 → 실시간 처리, 작업자 다수 참여    :  Kafka
+1. 제품 등록 → 주문 발생 → QR/일련번호 생성   :  Spring REST API + DB 트랜잭션 처
 ```
 <br>
 
-- Inspection 상세 
-
+- Inspection 상세
 ```aiignore
   1. 작업자가 출고 현장에서 QR코드를 스캔
   2. 출고 수량이 주문 수량과 일치하면 상태를 “완료”로 변경
@@ -67,104 +69,6 @@
 - health : 헬스체크용
 - domain : 도메인
 
-
-
-```
-.
-│   └── src
-│       └── main
-│           ├── java
-│           │   └── com
-│           │       └── qrlogi
-│           │           └── domain
-│           │               ├── buyer
-│           │               │   ├── dto
-│           │               │   │   ├── BuyerRequest.java
-│           │               │   │   └── BuyerResponse.java
-│           │               │   ├── entity
-│           │               │   │   └── Buyer.java
-│           │               │   ├── repository
-│           │               │   │   └── BuyerRepository.java
-│           │               │   └── service
-│           │               │       └── BuyerService.java
-│           │               ├── inspection
-│           │               │   ├── dto
-│           │               │   │   └── ScanRequest.java
-│           │               │   ├── entity
-│           │               │   │   ├── ScanLog.java
-│           │               │   │   └── ScanStatus.java
-│           │               │   ├── repository
-│           │               │   │   └── ScanLogRepository.java
-│           │               │   └── service
-│           │               │       └── ScanService.java
-│           │               ├── order
-│           │               │   ├── dto
-│           │               │   │   ├── OrderRequest.java
-│           │               │   │   └── OrderResponse.java
-│           │               │   ├── entity
-│           │               │   │   ├── OrderStatus.java
-│           │               │   │   └── Orders.java
-│           │               │   ├── repository
-│           │               │   │   └── OrderRepository.java
-│           │               │   └── service
-│           │               │       ├── OrderService.java
-│           │               │       └── OrderServiceImpl.java
-│           │               ├── orderitem
-│           │               │   ├── dto
-│           │               │   │   ├── OrderItemDTO.java
-│           │               │   │   └── OrderItemRequest.java
-│           │               │   ├── entity
-│           │               │   │   ├── OrderItem.java
-│           │               │   │   └── ShipmentStatus.java
-│           │               │   ├── repository
-│           │               │   │   └── OrderItemRepository.java
-│           │               │   └── service
-│           │               │       └── OrderItemService.java
-│           │               ├── payment
-│           │               │   ├── dto
-│           │               │   ├── entity
-│           │               │   │   ├── Payment.java
-│           │               │   │   ├── PaymentMethod.java
-│           │               │   │   └── PaymentStatus.java
-│           │               │   ├── repository
-│           │               │   └── service
-│           │               ├── product
-│           │               │   ├── dto
-│           │               │   │   └── ProductDTO.java
-│           │               │   ├── entity
-│           │               │   │   └── Product.java
-│           │               │   ├── repository
-│           │               │   │   └── ProductRepository.java
-│           │               │   └── service
-│           │               │       └── ProductService.java
-│           │               ├── shipment
-│           │               │   ├── dto
-│           │               │   ├── entity
-│           │               │   │   ├── ShipmentItem.java
-│           │               │   │   └── Shipments.java
-│           │               │   ├── repository
-│           │               │   └── service
-│           │               │       └── ShipmentService.java
-│           │               └── user
-│           │                   ├── dto
-│           │                   │   ├── DeleteRequest.java
-│           │                   │   ├── LoginRequest.java
-│           │                   │   ├── LoginResponse.java
-│           │                   │   ├── SignRequest.java
-│           │                   │   └── SignResponse.java
-│           │                   ├── entity
-│           │                   │   ├── User.java
-│           │                   │   ├── UserPrincipal.java
-│           │                   │   └── UserRole.java
-│           │                   ├── repository
-│           │                   │   └── UserRepository.java
-│           │                   └── service
-│           │                       ├── AuthService.java
-│           │                       └── LoginUserDetailService.java
-│           └── resources
-
-
-```
 <br><br><br>
 **Docker**
 - MySql
