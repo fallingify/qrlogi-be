@@ -31,7 +31,7 @@ public class ScanLog {
     @Column(nullable = false)
     private String scannedBy; //작업자이름
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String productSerial;
 
 

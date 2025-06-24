@@ -7,46 +7,75 @@ import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
 import com.qrlogi.domain.orderitem.OrderItemValidator.OrderItemValidator;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
-import com.qrlogi.domain.orderitem.repository.OrderItemRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class ScanService {
 
     private final ScanLogRepository scanLogRepository;
     private final OrderItemValidator orderItemValidator;
+    private final RedissonClient redissonClient;
 
-    //TODO : Redisson 분산 락 적용, scannedBy 스캔 > scannedQty 은 Lock을 걸어야 한다.
+    /**
+     * doScan() 스캔 : 분산 락으로 동시에 같은 OrderItem lastQty, scannedQty 수정막음
+     * Redisson 분산 락 적용, "scannedBy 스캔 > scannedQty" LOCK
+     */
     @Transactional
     public ScanResponse doScan(ScanRequest scanRequest) {
+        log.info("Trying to acquire lock for orderItemId: {}", scanRequest.getOrderItemId());
+        String lockKey = "lock:scan:" + scanRequest.getOrderItemId();
+        RLock lock = redissonClient.getLock(lockKey);
 
-        OrderItem orderItem = orderItemValidator.validateByOrderItemIdExists(scanRequest.getOrderItemId());
+        boolean isAcquired = false;
 
-        // 스캔 수량 + 1
-        Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());
-        int scannedQty = (lastQty == null) ? 1 : lastQty + 1;
+        try {
+            isAcquired = lock.tryLock(3, 10, TimeUnit.SECONDS);
+            if (!isAcquired) {
+                throw new IllegalStateException("scan is already in progress by another thread.");
+            }
+            log.info("Lock acquired for orderItemId: {}", scanRequest.getOrderItemId());
+            OrderItem orderItem = orderItemValidator.validateByOrderItemIdExists(scanRequest.getOrderItemId());
+
+            // 스캔 수량 + 1
+            Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());
+            int scannedQty = (lastQty == null) ? 1 : lastQty + 1;
 
 
-        // OrderItem의 출고 수량 증가
-        orderItem.addShippingQty(1);
+            // OrderItem의 출고 수량 증가
+            orderItem.addShippingQty(1);
 
 
-        //스캔로그 -> 추후 바이어한테 제공할 정보
-        ScanLog scanLog = ScanLog.builder()
-                .orderItem(orderItem)
-                .scannedAt(LocalDateTime.now())
-                .scannedBy(scanRequest.getWorker())
-                .scannedQty(scannedQty)
-                .build();
+            //스캔로그 -> 추후 바이어한테 제공할 정보
+            ScanLog scanLog = ScanLog.builder()
+                    .orderItem(orderItem)
+                    .scannedAt(LocalDateTime.now())
+                    .scannedBy(scanRequest.getWorker())
+                    .scannedQty(scannedQty)
+                    .build();
 
-        ScanLog savedLog = scanLogRepository.save(scanLog);
+            ScanLog savedLog = scanLogRepository.save(scanLog);
+            log.info("Scan completed for orderItemId: {}, scannedQty: {}", scanRequest.getOrderItemId(), scannedQty);
+            return ScanResponse.toDTO(savedLog, ScanStatus.SUCCESS);
 
-        return ScanResponse.toDTO(savedLog, ScanStatus.SUCCESS);
+        } catch (InterruptedException e) { //인터럽트발생 -> 플래그 복원
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("Thread was interrupted while trying to acquire the lock", e);
+        } finally {
+            if (isAcquired && lock.isHeldByCurrentThread()) { //사용후 반납
+                log.info("Releasing lock for orderItemId: {}", scanRequest.getOrderItemId());
+                lock.unlock();
+            }
+        }
 
     }
 
