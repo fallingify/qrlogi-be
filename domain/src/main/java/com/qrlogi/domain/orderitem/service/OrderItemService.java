@@ -67,11 +67,13 @@ public class OrderItemService {
                 .mapToObj(i -> createOrderItemSerial(orderItem)).toList();
 
     }
-
+    //TODO : Serial은 barcode(+QRCode)에도 적용
     //일련변호 생성된거 주입
     private OrderItemSerial createOrderItemSerial(OrderItem orderItem) {
         String serial = String.valueOf(idGenerator.nextId());
+        //수정
         String qrUrl = qrService.createQrUrl(serial);
+        String barcodeUrl = qrService.createBarcodeUrl(serial);
 
         return OrderItemSerial.builder()
                 .serial(serial)
@@ -79,6 +81,7 @@ public class OrderItemService {
                 .orderItem(orderItem)
                 .createdAt(LocalDateTime.now())
                 .qrImgUrl(qrUrl)
+                .barcodeImgUrl(barcodeUrl)
                 .build();
 
     }
