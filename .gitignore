@@ -44,3 +44,4 @@ application-*.properties
 
 #font
 *.ttfdomain/src/main/resources/fonts/*.ttf
+*.ttf
