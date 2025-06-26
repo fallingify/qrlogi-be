@@ -29,6 +29,10 @@ dependencies {
     testCompileOnly 'org.projectlombok:lombok'
     testAnnotationProcessor 'org.projectlombok:lombok'
 
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
     runtimeOnly 'com.h2database:h2'
     runtimeOnly 'com.mysql:mysql-connector-j'
 
@@ -59,5 +63,8 @@ dependencies {
 
     //pdfBox
     implementation 'org.apache.pdfbox:pdfbox:2.0.29'
+
+    //mail
+    implementation 'org.springframework.boot:spring-boot-starter-mail'
 
 }
