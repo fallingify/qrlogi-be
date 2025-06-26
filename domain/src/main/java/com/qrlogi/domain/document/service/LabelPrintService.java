@@ -54,8 +54,8 @@ public class LabelPrintService {
                 PDImageXObject qrX = LosslessFactory.createFromImage(pdDocument, qrImg);
                 PDImageXObject barX = LosslessFactory.createFromImage(pdDocument, barcodeImg);
 
-                pdContentStream.drawImage(qrX, x, y, 100, 100);
-                pdContentStream.drawImage(barX, x + 120, y + 40, 200, 60);
+                pdContentStream.drawImage(qrX, (float)x, (float)y, 100f, 100f);
+                pdContentStream.drawImage(barX, (float)(x + 120) , (float)(y + 40), 200f, 60f);
 
                 pdContentStream.beginText();
                 pdContentStream.setFont(font, 10);
