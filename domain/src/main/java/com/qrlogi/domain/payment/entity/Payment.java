@@ -19,7 +19,7 @@ public class Payment {
     @Column(length = 36)
     private String id; // UUID
 
-    @Column(name = "payment_num", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Long paymentNum; //내부식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -34,10 +34,10 @@ public class Payment {
     private PaymentMethod method;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payments_status", nullable = false)
+    @Column(nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column(name = "paid_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime paidAt;
 
     @PrePersist

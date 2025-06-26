@@ -22,7 +22,7 @@ public class Buyer {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String phone;
 
     @Column(name = "business_num", nullable = false, unique = true)

@@ -20,17 +20,17 @@ public class Shipment {
     @Column(length = 36)
     private String id; // UUID
 
-    @Column(name = "shipment_num", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private Long shipmentNum; //내부식별자
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Buyer buyer;
 
-    @Column(name = "shipment_code", nullable = false)
+    @Column(nullable = false)
     private String shipmentCode;
 
-    @Column(name = "shipment_date", nullable = false)
+    @Column(nullable = false)
     private LocalDateTime shipmentDate;
 
     @PrePersist

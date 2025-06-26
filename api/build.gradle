@@ -30,8 +30,6 @@ dependencies {
     implementation project(':domain')
 
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-    implementation 'org.springframework.boot:spring-boot-starter-data-redis-reactive'
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.projectlombok:lombok'
     implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -63,6 +61,13 @@ dependencies {
 
 
     implementation 'com.amazonaws:aws-java-sdk-s3:1.12.603'
+
+    //redisson
+    implementation 'org.redisson:redisson-spring-boot-starter:3.24.0'
+
+
+    //pdfBox
+    implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
 }
 

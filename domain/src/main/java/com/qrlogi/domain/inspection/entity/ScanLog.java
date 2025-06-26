@@ -19,15 +19,19 @@ public class ScanLog {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_item_id")
+    @JoinColumn(name = "order_item_id", nullable = false)
     private OrderItem orderItem;
 
+    @Column(nullable = false)
     private LocalDateTime scannedAt;
 
+    @Column(nullable = false)
     private int scannedQty;
 
+    @Column(nullable = false)
     private String scannedBy; //작업자이름
 
+    @Column(nullable = true)
     private String productSerial;
 
 

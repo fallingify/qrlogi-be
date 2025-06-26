@@ -1,8 +1,11 @@
 package com.qrlogi.domain.user.dto;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class LoginRequest {
     private String username;
     private String password;

@@ -15,6 +15,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
@@ -64,7 +65,7 @@ public class AuthService {
 
 
 
-
+    @Transactional
     public void deleteCurrentUser(DeleteRequest request) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();

@@ -57,4 +57,7 @@ public class OrderItem {
     }
 
 
+    public String getProductName() {
+        return this.product.getName();
+    }
 }
