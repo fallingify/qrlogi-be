@@ -28,4 +28,13 @@ public class OrderValidator {
     }
 
 
+    public Orders validateByOrderNumber(String orderNumber) {
+        try{
+            return orderRepository.findByOrderNumber(orderNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Invalid order number");
+        }
+    }
+
 }

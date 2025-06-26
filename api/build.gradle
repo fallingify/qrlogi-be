@@ -65,6 +65,10 @@ dependencies {
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.24.0'
 
+
+    //pdfBox
+    implementation 'org.apache.pdfbox:pdfbox:2.0.29'
+
 }
 
 tasks.named('test') {

@@ -41,3 +41,7 @@ application.yml
 application.properties
 application-*.yml
 application-*.properties
+
+#font
+domain/src/main/resources/fonts/*.ttf
+*.ttf
