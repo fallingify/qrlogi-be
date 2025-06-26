@@ -2,7 +2,9 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.5.0'
     id 'io.spring.dependency-management' version '1.1.4'
+
 }
+
 
 bootJar {
     enabled = false
@@ -53,5 +55,9 @@ dependencies {
 
     //redisson
     implementation 'org.redisson:redisson-spring-boot-starter:3.24.0'
-}
 
+
+    //pdfBox
+    implementation 'org.apache.pdfbox:pdfbox:2.0.29'
+
+}
