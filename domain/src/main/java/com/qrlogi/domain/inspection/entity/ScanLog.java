@@ -29,7 +29,7 @@ public class ScanLog {
     private int scannedQty;
 
     @Column(nullable = false)
-    private String scannedBy; //작업자이름
+    private String scannedBy; // 현장 스캔한 사람 실명 (수기 입력)
 
     @Column(nullable = true)
     private String productSerial;

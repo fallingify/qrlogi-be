@@ -17,8 +17,6 @@ public class ScanCompletedEvent {
     private int orderedQty;
     private int scannedQty;
     private ShipmentStatus shipmentStatus;
-    private String representativeName;
-    private String representativeEmail;
 
 
 }

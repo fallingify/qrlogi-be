@@ -25,7 +25,8 @@ public class ScanCompletedEventDto {
                 .productName(productName)
                 .orderedQty(orderedQty)
                 .scannedQty(scannedQty)
-                .shipmentStatus(shipmentStatus).build();
+                .shipmentStatus(shipmentStatus)
+                .build();
 
     }
 
