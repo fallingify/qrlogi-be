@@ -33,8 +33,16 @@ public class OrderValidator {
             return orderRepository.findByOrderNumber(orderNumber)
                     .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("Invalid order number");
+            throw new IllegalArgumentException("Invalid Order Number");
         }
     }
+
+    //삭제
+    // OrderValidator
+    public Orders validateByOrderNumberWithManager(String orderNumber) {
+        return orderRepository.findByOrderNumberWithManager(orderNumber)
+                .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+    }
+
 
 }

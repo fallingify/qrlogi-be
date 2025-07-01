@@ -34,8 +34,15 @@ public class Orders {
     @Column(nullable = false)
     private OrderStatus orderStatus;
 
+    //주문 후 나중에 담당자 배정 -> nullable
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_manager_id")
+    private OrderManager orderManager;
+
 
     public void cancel() {
         this.orderStatus = OrderStatus.CANCELLED;
     }
+
 }

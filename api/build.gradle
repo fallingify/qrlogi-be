@@ -69,6 +69,12 @@ dependencies {
     //pdfBox
     implementation 'org.apache.pdfbox:pdfbox:2.0.29'
 
+    //kafka
+    //kafka
+    implementation 'org.springframework.kafka:spring-kafka'
+    testImplementation 'org.springframework.kafka:spring-kafka-test'
+
+
 }
 
 tasks.named('test') {

@@ -5,6 +5,9 @@ import com.qrlogi.domain.inspection.dto.ScanResponse;
 import com.qrlogi.domain.inspection.entity.ScanLog;
 import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
+import com.qrlogi.domain.notification.dto.ScanCompletedEventDto;
+import com.qrlogi.domain.notification.producer.ScanCompletedProducer;
+import com.qrlogi.domain.notification.publisher.ScanCompletedPublisher;
 import com.qrlogi.domain.orderitem.OrderItemValidator.OrderItemValidator;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
 import lombok.RequiredArgsConstructor;
@@ -25,10 +28,11 @@ public class ScanService {
     private final ScanLogRepository scanLogRepository;
     private final OrderItemValidator orderItemValidator;
     private final RedissonClient redissonClient;
-
+    private final ScanCompletedPublisher publisher;
     /**
      * doScan() 스캔 : 분산 락으로 동시에 같은 OrderItem lastQty, scannedQty 수정막음
      * Redisson 분산 락 적용, "scannedBy 스캔 > scannedQty" LOCK
+     * kafka : Shipped 되면 이벤트 발생
      */
     @Transactional
     public ScanResponse doScan(ScanRequest scanRequest) {
@@ -50,10 +54,8 @@ public class ScanService {
             Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());
             int scannedQty = (lastQty == null) ? 1 : lastQty + 1;
 
-
             // OrderItem의 출고 수량 증가
             orderItem.addShippingQty(1);
-
 
             //스캔로그 -> 추후 바이어한테 제공할 정보
             ScanLog scanLog = ScanLog.builder()
@@ -64,12 +66,20 @@ public class ScanService {
                     .build();
 
             ScanLog savedLog = scanLogRepository.save(scanLog);
+
+            //스캔 후 ShipmentStatus.SHIPPED 상태일 때만 Kafka 이벤트 발행
+            publisher.publishScanCompleted(
+                    ScanCompletedEventDto.toDTO(orderItem, scannedQty)
+            );
+
+
             log.info("Scan completed for orderItemId: {}, scannedQty: {}", scanRequest.getOrderItemId(), scannedQty);
             return ScanResponse.toDTO(savedLog, ScanStatus.SUCCESS);
 
         } catch (InterruptedException e) { //인터럽트발생 -> 플래그 복원
             Thread.currentThread().interrupt();
             throw new RuntimeException("Thread was interrupted while trying to acquire the lock", e);
+
         } finally {
             if (isAcquired && lock.isHeldByCurrentThread()) { //사용후 반납
                 log.info("Releasing lock for orderItemId: {}", scanRequest.getOrderItemId());
