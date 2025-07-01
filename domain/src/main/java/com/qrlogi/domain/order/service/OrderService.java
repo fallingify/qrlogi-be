@@ -5,6 +5,7 @@ import com.qrlogi.domain.order.dto.OrderRequest;
 import com.qrlogi.domain.order.dto.OrderResponse;
 import com.qrlogi.domain.order.entity.OrderStatus;
 import com.qrlogi.domain.order.entity.Orders;
+import com.qrlogi.domain.order.repository.OrderManagerRepository;
 import com.qrlogi.domain.order.repository.OrderRepository;
 import com.qrlogi.domain.order.validator.OrderValidator;
 import com.qrlogi.domain.orderitem.dto.OrderItemDTO;
@@ -21,7 +22,9 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-
+/**
+ * 주문 생성 조회
+ */
 @Service
 @RequiredArgsConstructor
 public class OrderService {
@@ -35,7 +38,7 @@ public class OrderService {
     public OrderResponse createOrder(OrderRequest request) {
 
         Buyer buyer = orderValidator.validateBuyerExists(request.getBuyerId());
-        String orderNum = OrderNumUtil.getOrderNum();
+        String orderNum = OrderNumberUtil.getOrderNumber();
         Orders order = Orders.builder()
                 .id(UUID.randomUUID().toString())
                 .orderNumber(orderNum)

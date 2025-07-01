@@ -47,6 +47,8 @@ public class NotificationService {
 
         NotificationLog logEntry = NotificationLog.builder()
                 .type(NotificationType.EMAIL)
+                .receiverName(request.getReceiverName())
+                .receiverEmail(request.getReceiverEmail())
                 .emailTitle(request.getEmailTitle())
                 .message(request.getMessage())
                 .status(status)
