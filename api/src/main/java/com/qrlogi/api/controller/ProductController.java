@@ -35,7 +35,6 @@ public class ProductController {
     }
 
 
-
     @DeleteMapping("/{productId}")
     public ResponseEntity<Void>  deleteProduct(@PathVariable Long productId) {
 
