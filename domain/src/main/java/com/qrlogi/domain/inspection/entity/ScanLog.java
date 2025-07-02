@@ -35,6 +35,4 @@ public class ScanLog {
     private String productSerial;
 
 
-
-
 }
