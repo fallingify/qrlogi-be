@@ -1,12 +1,12 @@
 package com.qrlogi.domain.inspection.service;
 
+import com.qrlogi.domain.document.service.GoogleSheetService;
 import com.qrlogi.domain.inspection.dto.ScanRequest;
 import com.qrlogi.domain.inspection.dto.ScanResponse;
 import com.qrlogi.domain.inspection.entity.ScanLog;
 import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
 import com.qrlogi.domain.notification.dto.ScanCompletedEventDto;
-import com.qrlogi.domain.notification.producer.ScanCompletedProducer;
 import com.qrlogi.domain.notification.publisher.ScanCompletedPublisher;
 import com.qrlogi.domain.orderitem.OrderItemValidator.OrderItemValidator;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
@@ -29,6 +29,7 @@ public class ScanService {
     private final OrderItemValidator orderItemValidator;
     private final RedissonClient redissonClient;
     private final ScanCompletedPublisher publisher;
+    private final GoogleSheetService sheetService;
     /**
      * doScan() 스캔 : 분산 락으로 동시에 같은 OrderItem lastQty, scannedQty 수정막음
      * Redisson 분산 락 적용, "scannedBy 스캔 > scannedQty" LOCK
