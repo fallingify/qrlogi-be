@@ -10,6 +10,7 @@ public class ScanRequest {
 
     private Long orderItemId;
     private String worker;
+    private String serial;
     //스캔1번당 +1qty
 
 }

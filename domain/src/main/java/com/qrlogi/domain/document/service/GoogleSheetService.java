@@ -1,65 +1,91 @@
 package com.qrlogi.domain.document.service;
 
-import com.qrlogi.domain.document.dto.GoogleSheetDto;
+
+import com.google.api.services.sheets.v4.Sheets;
+import com.google.api.services.sheets.v4.model.*;
+import com.qrlogi.domain.document.entity.SheetRow;
+import com.qrlogi.domain.document.repository.SheetRowRepository;
+import com.qrlogi.domain.document.validator.GoogleSheetValidator;
+import com.qrlogi.domain.inspection.entity.ScanLog;
 import com.qrlogi.domain.orderitem.entity.OrderItemSerial;
+import com.qrlogi.domain.orderitem.repository.OrderItemSerialRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.io.IOException;
 import java.util.List;
 
-/**
- * 구글 시트 실시간 반영용
- */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class GoogleSheetService {
 
-//    private final GoogleSheetClient webhookClient;
+    private final Sheets sheets;
+    private final String RANGE = "A:F";
+    private final GoogleSheetValidator googleSheetValidator;
 
-    private final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${webhook.google-sheet.url}")
-    private String sheetUrl;
-
-    /*
-    스캔시 전송
-     */
-    public void send(OrderItemSerial serial) {
-        GoogleSheetDto dto = GoogleSheetDto.from(serial, serial.getIsScanned());
-        try{
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON);
-
-            HttpEntity<GoogleSheetDto> entity = new HttpEntity<>(dto, headers);
-            ResponseEntity<String> response = restTemplate.postForEntity(sheetUrl, entity, String.class);
+    private final SheetRowRepository sheetRowRepository;
+    private final OrderItemSerialRepository orderItemSerialRepository;
 
 
-            log.info("Sending to sheet > response : {}", response.getBody());
+    public SheetRow getOrCreateSheetRow(String serial) {
+        return sheetRowRepository.findByOrderItemSerial_Serial(serial)
+                .orElseGet(() -> {
+                    OrderItemSerial orderItemSerial = orderItemSerialRepository.findBySerial(serial)
+                            .orElseThrow(() -> new IllegalArgumentException("OrderItemSerial not found for serial: " + serial));
 
-        } catch (Exception e) {
-            log.error("Sending googleSheet failed : {} ", e.getMessage());
+                    SheetRow newRow = SheetRow.builder()
+                            .orderItemSerial(orderItemSerial)
+                            .sheetName(orderItemSerial.getOrderItem().getOrder().getOrderNumber())
+                            .rowIndex(Integer.parseInt(String.valueOf(sheetRowRepository.count() + 2)))
+                            .build();
+
+                    return sheetRowRepository.save(newRow);
+                });
+    }
+
+
+
+
+    @Value("${google.google-sheet.sheet-id}")
+    private String sheetId;
+
+    public void writeTestRow() {
+        List<Object> row = List.of("TEST-123", "Test Product", "TP-001", "SERIAL", "scanned", "2025-07-07T18:00");
+        ValueRange valueRange = new ValueRange().setValues(List.of(row));
+
+        try {
+            sheets.spreadsheets().values()
+                    .append(sheetId, RANGE, valueRange)
+                    .setValueInputOption("RAW")
+                    .setInsertDataOption("INSERT_ROWS")
+                    .execute();
+            log.info("성공: {}", row);
+        } catch (IOException e) {
+            log.error("실패, Google API 오류 : {}", e.getMessage());
+            throw new RuntimeException("Google Sheet 업로드 실패", e);
         }
     }
-    /*
-    테이블 초기화
-     */
-    public void initializationBySerials(List<OrderItemSerial> serials) {
-        for(OrderItemSerial serial : serials) {
-            send(serial);
-        }
+
+    public void appendRowBySerial(SheetRow sheetRow, ScanLog scanLog) {
+        String sheetName = sheetRow.getSheetName();
+        List<Object> record = sheetRow.toRecord(scanLog);
+
+        googleSheetValidator.createSheetIfAbsent(sheetName);
+        googleSheetValidator.validateAppendingRow(sheetName, record);
+
     }
+
+
+
+
+
 
 
 
 
 }
+

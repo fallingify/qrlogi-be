@@ -45,3 +45,8 @@ application-*.properties
 #font
 domain/src/main/resources/fonts/*.ttf
 *.ttf
+
+
+#json
+domain/src/main/resources/keys/qrlogistics-465202-a7528e2137d5.json
+qrlogistics-465202-a7528e2137d5.json
