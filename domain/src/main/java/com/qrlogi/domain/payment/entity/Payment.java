@@ -1,11 +1,9 @@
 package com.qrlogi.domain.payment.entity;
 
-
-import com.qrlogi.domain.shipment.entity.Shipment;
+import com.qrlogi.domain.order.entity.Orders;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Getter
@@ -16,15 +14,14 @@ import java.util.UUID;
 public class Payment {
 
     @Id
-    @Column(length = 36)
-    private String id; // UUID
-
-    @Column(nullable = false, unique = true)
-    private Long paymentNum; //내부식별자
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "shipment_id", nullable = false)
-    private Shipment shipment;
+    @JoinColumn(name = "order_id", nullable = false)
+    private Orders order;
+
+    private String impUid;
 
     @Column(nullable = false)
     private Integer amount;
@@ -37,11 +34,20 @@ public class Payment {
     @Column(nullable = false)
     private PaymentStatus paymentStatus;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime paidAt;
 
-    @PrePersist
-    public void generateId() {
-        if (id == null) id = UUID.randomUUID().toString();
+    public void markPaid(String impUid, int amount) {
+        this.impUid = impUid;
+        this.amount = amount;
+        this.paymentStatus = PaymentStatus.PAID;
+        this.paidAt = LocalDateTime.now();
     }
+
+    public void markFailed() {
+        this.paymentStatus = PaymentStatus.FAILED;
+        this.paidAt = null;
+    }
+
+
 }
