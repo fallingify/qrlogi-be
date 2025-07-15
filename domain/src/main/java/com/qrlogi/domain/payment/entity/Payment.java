@@ -21,31 +21,37 @@ public class Payment {
     @JoinColumn(name = "order_id", nullable = false)
     private Orders order;
 
-    private String impUid;
+    @Column(nullable = false, unique = true)
+    private String paymentKey;
 
     @Column(nullable = false)
     private Integer amount;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "payments_method", nullable = false)
+    @Column(nullable = false)
     private PaymentMethod method;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentStatus paymentStatus;
+    private PaymentStatus status;
 
     @Column
     private LocalDateTime paidAt;
 
-    public void markPaid(String impUid, int amount) {
-        this.impUid = impUid;
+    public void markPaid(String paymentKey, int amount) {
+        this.paymentKey = paymentKey;
         this.amount = amount;
-        this.paymentStatus = PaymentStatus.PAID;
+        this.status = PaymentStatus.PAID;
         this.paidAt = LocalDateTime.now();
     }
 
     public void markFailed() {
-        this.paymentStatus = PaymentStatus.FAILED;
+        this.status = PaymentStatus.FAILED;
+        this.paidAt = null;
+    }
+
+    public void markCanceled() {
+        this.status = PaymentStatus.CANCELED;
         this.paidAt = null;
     }
 

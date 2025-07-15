@@ -15,6 +15,5 @@ public class ProductValidator {
 
         return productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Product not found"));
-
     }
 }

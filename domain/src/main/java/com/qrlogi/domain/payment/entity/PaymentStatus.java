@@ -1,5 +1,5 @@
 package com.qrlogi.domain.payment.entity;
 
 public enum PaymentStatus {
-    PENDING, PAID, FAILED
+    PENDING, PAID, CANCELED, FAILED
 }
