@@ -10,10 +10,13 @@ import com.qrlogi.domain.inspection.entity.ScanStatus;
 import com.qrlogi.domain.inspection.repository.ScanLogRepository;
 import com.qrlogi.domain.notification.dto.ScanCompletedEventDto;
 import com.qrlogi.domain.notification.publisher.ScanCompletedPublisher;
+import com.qrlogi.domain.order.validator.OrderValidator;
 import com.qrlogi.domain.orderitem.OrderItemValidator.OrderItemValidator;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
 import com.qrlogi.domain.orderitem.entity.OrderItemSerial;
 import com.qrlogi.domain.orderitem.repository.OrderItemSerialRepository;
+import com.qrlogi.domain.payment.PaymentValidator.PaymentValidator;
+import com.qrlogi.domain.payment.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.api.RLock;
@@ -36,10 +39,16 @@ public class ScanService {
     private final OrderItemSerialRepository  orderItemSerialRepository;
     private final GoogleSheetService googleSheetService;
     private final SheetRowRepository sheetRowRepository;
+    private final PaymentValidator paymentValidator;
+    private final PaymentService paymentService;
+
     /**
      * doScan() 스캔 : 분산 락으로 동시에 같은 OrderItem lastQty, scannedQty 수정막음
      * Redisson 분산 락 적용, "scannedBy 스캔 > scannedQty" LOCK
      * kafka : Shipped 되면 이벤트 발생
+     *
+     * 1. GoogleSheet연결
+     * 2. 100건초과시 결제유도
      */
     @Transactional
     public ScanResponse doScan(ScanRequest scanRequest) {
@@ -63,6 +72,9 @@ public class ScanService {
             }
             log.info("Lock acquired for orderItemId: {}", scanRequest.getOrderItemId());
             OrderItem orderItem = orderItemValidator.validateByOrderItemIdExists(scanRequest.getOrderItemId());
+
+            //결제 여부 판단
+            paymentService.validatePayOrNot(orderItem.getOrder());
 
             // 스캔 수량 + 1
             Integer lastQty = scanLogRepository.findMaxScannedQty(orderItem.getId());
