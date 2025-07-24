@@ -2,10 +2,14 @@ package com.qrlogi.domain.payment.factory;
 
 import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.payment.dto.PaymentHistoryDto;
+import com.qrlogi.domain.payment.dto.PaymentReadyResponse;
+import com.qrlogi.domain.payment.dto.PaymentRequest;
 import com.qrlogi.domain.payment.dto.PaymentResponse;
 import com.qrlogi.domain.payment.entity.Payment;
 import com.qrlogi.domain.payment.entity.PaymentMethod;
 import com.qrlogi.domain.payment.entity.PaymentStatus;
+import com.qrlogi.domain.user.entity.User;
+
 import java.time.LocalDateTime;
 
 public class PaymentFactory {
@@ -37,6 +41,21 @@ public class PaymentFactory {
                 .build();
     }
 
+
+    // -> PaymentReady
+    public static PaymentReadyResponse toPaymentReadyResponse(User user, PaymentRequest request) {
+        return PaymentReadyResponse.builder()
+                .customerKey(user.getId().toString())
+                .orderId(request.getOrderId())
+                .orderName("Qrlogistics 유료 패키지 결제")
+                .amount(request.getAmount())
+                .customerEmail(user.getEmail())
+                .customerName(user.getUsername())
+                .build();
+
+
+
+    }
 
 
 }

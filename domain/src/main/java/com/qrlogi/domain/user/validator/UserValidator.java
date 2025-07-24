@@ -2,8 +2,10 @@ package com.qrlogi.domain.user.validator;
 
 import com.qrlogi.domain.user.dto.DeleteRequest;
 import com.qrlogi.domain.user.entity.User;
+import com.qrlogi.domain.user.entity.UserPrincipal;
 import com.qrlogi.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -49,5 +51,16 @@ public class UserValidator {
     public User findUserByUsernameOrThrow(String username) {
         return userRepository.findByUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    }
+
+    public User getCurrentUser() {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+        if (principal instanceof UserPrincipal userPrincipal) {
+            return userPrincipal.getUser();
+        }
+
+        throw new IllegalStateException("User not found");
+
     }
 }

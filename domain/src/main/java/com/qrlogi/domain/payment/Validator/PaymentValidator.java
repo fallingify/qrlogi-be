@@ -1,4 +1,4 @@
-package com.qrlogi.domain.payment.PaymentValidator;
+package com.qrlogi.domain.payment.Validator;
 
 import com.qrlogi.domain.payment.dto.PaymentRequest;
 import com.qrlogi.domain.payment.dto.PaymentResponse;
@@ -13,6 +13,7 @@ public class PaymentValidator {
 
     private final PaymentRepository paymentRepository;
 
+    //TODO : 이름 수정  - 기능이랑 안 맞음
     public Payment validateProductExists(String orderId) {
         return paymentRepository.findByOrderId(orderId)
                 .orElseThrow(() -> new IllegalArgumentException("payment not found for this order"));

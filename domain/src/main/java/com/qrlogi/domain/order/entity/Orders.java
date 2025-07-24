@@ -3,6 +3,7 @@ package com.qrlogi.domain.order.entity;
 
 import com.qrlogi.domain.buyer.entity.Buyer;
 import com.qrlogi.domain.orderitem.entity.OrderItem;
+import com.qrlogi.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -29,6 +30,10 @@ public class Orders {
     private String orderNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "buyer_id", nullable = false)
     private Buyer buyer;
 
@@ -38,6 +43,8 @@ public class Orders {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private OrderStatus orderStatus;
+
+
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)

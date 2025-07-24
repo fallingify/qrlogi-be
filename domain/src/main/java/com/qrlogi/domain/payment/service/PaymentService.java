@@ -2,7 +2,7 @@ package com.qrlogi.domain.payment.service;
 
 import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.order.validator.OrderValidator;
-import com.qrlogi.domain.payment.PaymentValidator.PaymentValidator;
+import com.qrlogi.domain.payment.Validator.PaymentValidator;
 import com.qrlogi.domain.payment.dto.*;
 import com.qrlogi.domain.payment.entity.Payment;
 import com.qrlogi.domain.payment.entity.PaymentMethod;
@@ -56,7 +56,7 @@ public class PaymentService {
                 "amount", request.getAmount());
 
         try {
-
+            //TODO: {} 안 코드 래핑해서 따로 분리하기
             HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, header);
             ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(
                             tossPayUrl,
@@ -76,6 +76,8 @@ public class PaymentService {
             return responseBody;
 
         } catch (RestClientException e) {
+            //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
+            //TODO: {} 안 코드 래핑해서 따로 분리하기
             Orders failedPayment = orderValidator.validateOrderExists(request.getOrderId());
 
             Payment payment = Payment.builder()
@@ -87,6 +89,7 @@ public class PaymentService {
                     .build();
 
             payment.markFailed();
+            //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
             paymentRepository.save(payment);
 
             log.error("토스 API 연결 에러 문제: {}", e.getMessage());
@@ -119,10 +122,12 @@ public class PaymentService {
         );
 
         HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, header);
+
         try {
             ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(
                     url, HttpMethod.POST, httpEntity, PaymentResponse.class);
             PaymentResponse responseBody = response.getBody();
+            //TODO : 아래 코드는 없어도 됨
             if (responseBody == null) {
                 throw new IllegalArgumentException("Response body is null");
             }
@@ -133,6 +138,7 @@ public class PaymentService {
             // 상태가 반영된 새로운 Payment 객체 생성 및 저장
             Payment canceledPayment = PaymentFactory.toPayment(responseBody, payment.getOrder());
             payment.markCanceled();
+           //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
             paymentRepository.save(canceledPayment);
 
             return responseBody;
