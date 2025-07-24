@@ -20,9 +20,12 @@ public class TossConfig {
 
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getInterceptors().add((request, body, execution) -> {
-            String encodedKeyInBase64 = Base64.getEncoder().encodeToString(secretKey.getBytes());
+
+            String credentials = secretKey + ":";
+            String encoded = Base64.getEncoder().encodeToString(credentials.getBytes());
             HttpHeaders headers = request.getHeaders();
-            headers.setBasicAuth(encodedKeyInBase64);
+
+            headers.add("Authorization", "Basic " + encoded);
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             return execution.execute(request, body);

@@ -14,6 +14,8 @@ import com.qrlogi.domain.orderitem.entity.ShipmentStatus;
 import com.qrlogi.domain.orderitem.repository.OrderItemRepository;
 import com.qrlogi.domain.product.entity.Product;
 import com.qrlogi.domain.product.validator.ProductValidator;
+import com.qrlogi.domain.user.entity.User;
+import com.qrlogi.domain.user.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,16 +34,21 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final OrderItemRepository orderItemRepository;
     private final OrderValidator orderValidator;
+    private final UserValidator userValidator;
     private final ProductValidator productValidator;
+
 
     @Transactional
     public OrderResponse createOrder(OrderRequest request) {
 
         Buyer buyer = orderValidator.validateBuyerExists(request.getBuyerId());
+        User user = userValidator.getCurrentUser();
         String orderNum = OrderNumberUtil.getOrderNumber();
+
         Orders order = Orders.builder()
                 .id(UUID.randomUUID().toString())
                 .orderNumber(orderNum)
+                .user(user)
                 .buyer(buyer)
                 .orderDate(LocalDateTime.now())
                 .orderStatus(OrderStatus.REQUESTED)

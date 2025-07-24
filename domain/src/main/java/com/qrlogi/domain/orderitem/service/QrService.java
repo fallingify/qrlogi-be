@@ -4,6 +4,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
+import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
@@ -19,6 +20,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 
 @Service
@@ -124,20 +126,44 @@ public class QrService {
     public BufferedImage getQrImageFromS3(OrderItemSerial serial) {
         String key = "qr/" + serial.getOrderItem().getOrder().getOrderNumber() + "/" + serial.getSerial() + ".png";
         S3Object object = amazonS3.getObject(bucketName, key);
+        S3ObjectInputStream inputStream = null;
         try {
-            return ImageIO.read(object.getObjectContent());
+            inputStream = object.getObjectContent();
+            BufferedImage image = ImageIO.read(inputStream);
+
+            //TODO : 바로 아래 코드 삭제하기
+            //남은 inputStream을 전부 소모(drain)
+            while(inputStream.read() != -1) {}
+
+            return image;
         } catch (IOException e) {
-            throw new RuntimeException("Qr image loading fails", e);
+            throw new RuntimeException("QR image loading failed", e);
+        } finally {
+            if(inputStream !=null) {
+                try{ inputStream.close(); } catch (IOException ignored) {}
+            }
         }
     }
 
     public BufferedImage getBarcodeImageFromS3(OrderItemSerial serial) {
         String key = "barcode/" + serial.getOrderItem().getOrder().getOrderNumber() + "/" + serial.getSerial() + ".png";
         S3Object object = amazonS3.getObject(bucketName, key);
+        S3ObjectInputStream inputStream = null;
         try {
-            return ImageIO.read(object.getObjectContent());
+            inputStream = object.getObjectContent();
+            BufferedImage image = ImageIO.read(inputStream);
+
+            //TODO : 바로 아래 코드 삭제하기
+            //남은 inputStream을 전부 소모(drain)
+            while(inputStream.read() != -1) {}
+
+            return image;
         } catch (IOException e) {
             throw new RuntimeException("Barcode image loading failed", e);
+        } finally {
+            if(inputStream !=null) {
+                try{ inputStream.close(); } catch (IOException ignored) {}
+            }
         }
     }
 

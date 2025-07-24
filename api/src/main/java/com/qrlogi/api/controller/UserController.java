@@ -2,11 +2,15 @@ package com.qrlogi.api.controller;
 
 
 import com.qrlogi.domain.user.dto.*;
+import com.qrlogi.domain.user.entity.UserPrincipal;
 import com.qrlogi.domain.user.service.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -38,5 +42,6 @@ public class UserController {
         authService.deleteCurrentUser(request);
         return ResponseEntity.ok("탈퇴되었습니다.");
     }
+
 
 }
