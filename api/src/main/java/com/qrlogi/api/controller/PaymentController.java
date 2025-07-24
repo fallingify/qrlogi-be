@@ -1,10 +1,11 @@
 package com.qrlogi.api.controller;
 
-import com.qrlogi.domain.payment.dto.PaymentCancelRequest;
-import com.qrlogi.domain.payment.dto.PaymentHistoryDto;
-import com.qrlogi.domain.payment.dto.PaymentRequest;
-import com.qrlogi.domain.payment.dto.PaymentResponse;
+import com.qrlogi.domain.order.entity.Orders;
+import com.qrlogi.domain.payment.dto.*;
+import com.qrlogi.domain.payment.factory.PaymentFactory;
 import com.qrlogi.domain.payment.service.PaymentService;
+import com.qrlogi.domain.user.entity.User;
+import com.qrlogi.domain.user.validator.UserValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +18,26 @@ import java.util.List;
 public class PaymentController {
 
     private final PaymentService paymentService;
+    private final UserValidator userValidator;
+
+    /**
+     * 결제 정보 전달 (-> 백엔드)
+     */
+    @PostMapping("/request")
+    public ResponseEntity<PaymentReadyResponse> preparePayment(@RequestBody PaymentRequest request) {
+
+        User currentUser = userValidator.getCurrentUser();
+        PaymentReadyResponse response = PaymentFactory.toPaymentReadyResponse(currentUser, request);
+        return  ResponseEntity.ok(response);
+
+    }
 
     /**
      * 결제 승인
      */
     @PostMapping("/confirm")
     public ResponseEntity<PaymentResponse> approve(@RequestBody PaymentRequest paymentRequest) {
+
         PaymentResponse response = paymentService.approvePayment(paymentRequest);
         return ResponseEntity.ok(response);
     }
@@ -33,7 +48,8 @@ public class PaymentController {
      */
     @GetMapping("/view/{orderId}")
     public ResponseEntity<PaymentHistoryDto> view(@PathVariable String orderId) {
-        return ResponseEntity.ok(paymentService.getPaymentHistory(orderId));
+        PaymentHistoryDto response = paymentService.getPaymentHistory(orderId);
+        return ResponseEntity.ok(response);
     }
 
     /**
@@ -41,6 +57,7 @@ public class PaymentController {
      */
     @PostMapping("/cancel")
     public ResponseEntity<PaymentResponse> cancel(@RequestBody PaymentCancelRequest paymentCancelRequest) {
+
         PaymentResponse response = paymentService.cancelPayment(paymentCancelRequest);
         return ResponseEntity.ok(response);
     }
@@ -51,7 +68,9 @@ public class PaymentController {
      */
     @GetMapping("/admin")
     public ResponseEntity<List<PaymentHistoryDto>> getAllPayments() {
-        return ResponseEntity.ok(paymentService.getAllPaymentHistories());
+
+        List<PaymentHistoryDto> response = paymentService.getAllPaymentHistories();
+        return ResponseEntity.ok(response);
     }
 
 }
