@@ -5,7 +5,6 @@ import com.qrlogi.domain.order.validator.OrderValidator;
 import com.qrlogi.domain.payment.Validator.PaymentValidator;
 import com.qrlogi.domain.payment.dto.*;
 import com.qrlogi.domain.payment.entity.Payment;
-import com.qrlogi.domain.payment.entity.PaymentMethod;
 import com.qrlogi.domain.payment.entity.PaymentStatus;
 import com.qrlogi.domain.payment.factory.PaymentFactory;
 import com.qrlogi.domain.payment.repository.PaymentRepository;
@@ -42,62 +41,81 @@ public class PaymentService {
                 .orElse(false);
     }
 
-    /**
-     * c. 결제 승인 API(request는 클라이언트에서 받아옴)
-     */
-    public PaymentResponse approvePayment(PaymentRequest request) {
+    //결제승인
+    public Payment approvePayment(PaymentRequest request) {
 
-        Orders order = orderValidator.validateOrderExists(request.getOrderId());
-        String tossPayUrl = "https://api.tosspayments.com/v1/payments/" + request.getPaymentKey();
-
-        HttpHeaders header = createHttpHeaders();
-        Map<String, Object> body = Map.of(
-                "orderId", request.getOrderId(),
-                "amount", request.getAmount());
-
+        String paymentKey = request.getPaymentKey();
         try {
-            //TODO: {} 안 코드 래핑해서 따로 분리하기
-            HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, header);
-            ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(
-                            tossPayUrl,
-                            HttpMethod.POST,
-                            httpEntity,
-                            PaymentResponse.class);
-
-            PaymentResponse responseBody = response.getBody();
-            if (responseBody == null) {
-                throw new IllegalArgumentException("Payment Response is null");
-            }
-
+            Orders order = orderValidator.validateOrderExists(request.getOrderId());
+            Map<String, Object> body = Map.of(
+                    "orderId", request.getOrderId(),
+                    "amount", request.getAmount()
+            );
+            PaymentResponse responseBody = requestApproval(paymentKey, body);
             paymentValidator.validatePaymentResponse(responseBody, request);
-            Payment payment = PaymentFactory.toPayment(responseBody, order);
-            paymentRepository.save(payment);
 
-            return responseBody;
+            return PaymentFactory.toApprovedPayment(responseBody, order);
 
         } catch (RestClientException e) {
-            //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
-            //TODO: {} 안 코드 래핑해서 따로 분리하기
-            Orders failedPayment = orderValidator.validateOrderExists(request.getOrderId());
-
-            Payment payment = Payment.builder()
-                    .order(failedPayment)
-                    .paymentKey(request.getPaymentKey())
-                    .amount(request.getAmount())
-                    .method(PaymentMethod.CARD) //TODO : 수정필요, method변경해야함
-                    .status(PaymentStatus.FAILED)
-                    .build();
-
-            payment.markFailed();
-            //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
-            paymentRepository.save(payment);
-
-            log.error("토스 API 연결 에러 문제: {}", e.getMessage());
-            throw new IllegalArgumentException("Payment failed");
+            Orders failedOrder= orderValidator.validateOrderExists(request.getOrderId());
+            return  PaymentFactory.toFailedPayment(request,failedOrder);
         }
+    }
+
+    //Http 호출부 생성
+    private PaymentResponse requestApproval(String paymentKey, Map<String, Object> body) {
+
+        String tossPayUrl = "https://api.tosspayments.com/v1/payments/" + paymentKey;
+        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, createHttpHeaders());
+        ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(tossPayUrl, HttpMethod.POST, httpEntity, PaymentResponse.class);
+        return response.getBody();
+    }
 
 
-    }//end
+    public Payment cancelPayment(PaymentCancelRequest request) {
+
+        try {
+            Map<String, Object> body = Map.of(
+                    "cancelReason", "사용자 요청",
+                    "cancelAmount", request.getCancelAmount()
+            );
+
+            PaymentResponse responseBody = requestCancel(request.getPaymentKey(), body);
+            Payment payment = paymentValidator.validatePaymentExistByPaymentKey(request.getPaymentKey());
+
+            Payment canceled = PaymentFactory.toCanceledPayment(responseBody, payment.getOrder());
+            canceled.markCanceled();
+            return canceled;
+
+        } catch (RestClientException e) {
+            throw new RuntimeException("Payment cancel failed");
+        }
+    }
+
+    private PaymentResponse requestCancel(String paymentKey, Map<String, Object> body) {
+        String url = "https://api.tosspayments.com/v1/payments/" + paymentKey+ "/cancel";
+        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, createHttpHeaders());
+        ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(url, HttpMethod.POST, httpEntity, PaymentResponse.class);
+        return response.getBody();
+    }
+
+
+    //헤더생성
+    private HttpHeaders createHttpHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBasicAuth(tossSecretKey);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        return headers;
+    }
+
+
+    //기록확인용
+    public List<PaymentHistoryDto> getAllPaymentHistories(){
+        return paymentRepository.findAll().stream()
+                .map(PaymentFactory::toPaymentHistoryDto)
+                .collect(Collectors.toList());
+    }
 
 
     public PaymentHistoryDto getPaymentHistory(String orderId) {
@@ -106,57 +124,7 @@ public class PaymentService {
     }
 
 
-    /**
-     * return 타입 dto로 다시 구성하기
-     *
-     * @return
-     */
-    public PaymentResponse cancelPayment(PaymentCancelRequest request) {
-
-        String url = "https://api.tosspayments.com/v1/payments/" + request.getPaymentKey() + "/cancel";
-
-        HttpHeaders header = createHttpHeaders();
-        Map<String, Object> body = Map.of(
-                "cancelReason", "사용자 요청",
-                "cancelAmount", request.getCancelAmount()
-        );
-
-        HttpEntity<Map<String, Object>> httpEntity = new HttpEntity<>(body, header);
-
-        try {
-            ResponseEntity<PaymentResponse> response = tossRestTemplate.exchange(
-                    url, HttpMethod.POST, httpEntity, PaymentResponse.class);
-            PaymentResponse responseBody = response.getBody();
-            //TODO : 아래 코드는 없어도 됨
-            if (responseBody == null) {
-                throw new IllegalArgumentException("Response body is null");
-            }
-
-            //엔티티조횐
-            Payment payment = paymentValidator.validatePaymentExistByPaymentKey(request.getPaymentKey());
-
-            // 상태가 반영된 새로운 Payment 객체 생성 및 저장
-            Payment canceledPayment = PaymentFactory.toPayment(responseBody, payment.getOrder());
-            payment.markCanceled();
-           //TODO : 아래 코드는 호출부에서 해야됨(이동필요) trasaction잡기, save()는 밖으로 빼기
-            paymentRepository.save(canceledPayment);
-
-            return responseBody;
-
-        } catch (RestClientException e) {
-            log.error("토스 API 연결 에러 문제: {}", e.getMessage());
-            throw new RuntimeException("Payment cancel failed");
-        }
-    }
-
-    public List<PaymentHistoryDto> getAllPaymentHistories(){
-
-        return paymentRepository.findAll().stream()
-                .map(PaymentFactory::toPaymentHistoryDto)
-                .collect(Collectors.toList());
-    }
-
-
+    //결제여부판단
     public void validatePayOrNot(Orders order){
         if(order.isRequirePayment() && !isPaymentProcessed(order)) {
             throw new IllegalArgumentException("Payment is not required. Please pay");
@@ -166,14 +134,4 @@ public class PaymentService {
 
 
 
-    /**
-     * 헤더 생성
-     */
-    private HttpHeaders createHttpHeaders() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setBasicAuth(tossSecretKey);
-        headers.setContentType(MediaType.APPLICATION_JSON);
-
-        return headers;
-    }
 }
