@@ -1,8 +1,9 @@
 package com.qrlogi.api.controller;
 
-import com.qrlogi.domain.order.entity.Orders;
 import com.qrlogi.domain.payment.dto.*;
+import com.qrlogi.domain.payment.entity.Payment;
 import com.qrlogi.domain.payment.factory.PaymentFactory;
+import com.qrlogi.domain.payment.repository.PaymentRepository;
 import com.qrlogi.domain.payment.service.PaymentService;
 import com.qrlogi.domain.user.entity.User;
 import com.qrlogi.domain.user.validator.UserValidator;
@@ -19,6 +20,7 @@ public class PaymentController {
 
     private final PaymentService paymentService;
     private final UserValidator userValidator;
+    private final PaymentRepository paymentRepository;
 
     /**
      * 결제 정보 전달 (-> 백엔드)
@@ -38,8 +40,9 @@ public class PaymentController {
     @PostMapping("/confirm")
     public ResponseEntity<PaymentResponse> approve(@RequestBody PaymentRequest paymentRequest) {
 
-        PaymentResponse response = paymentService.approvePayment(paymentRequest);
-        return ResponseEntity.ok(response);
+        Payment payment =  paymentService.approvePayment(paymentRequest);
+        paymentRepository.save(payment);
+        return ResponseEntity.ok(PaymentFactory.toPaymentResponse(payment));
     }
 
 
@@ -57,9 +60,9 @@ public class PaymentController {
      */
     @PostMapping("/cancel")
     public ResponseEntity<PaymentResponse> cancel(@RequestBody PaymentCancelRequest paymentCancelRequest) {
-
-        PaymentResponse response = paymentService.cancelPayment(paymentCancelRequest);
-        return ResponseEntity.ok(response);
+        Payment canceledPayment = paymentService.cancelPayment(paymentCancelRequest);
+        paymentRepository.save(canceledPayment);
+        return ResponseEntity.ok(PaymentFactory.toPaymentResponse(canceledPayment));
     }
 
 
